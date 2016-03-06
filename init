@@ -23,7 +23,7 @@ encadre "INIT SCRIPT V$VERSION"
 
 jaune "Scripts actifs: "
 
-for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/[!README.md]*; do
+for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
         rouge "(*) ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
 done;
 
@@ -33,7 +33,7 @@ done;
 
 jaune "Lancement des scripts..."
 
-for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/[!README.md]*; do
+for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
         rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
         chmod +x ${script}
         commande "${script}"
