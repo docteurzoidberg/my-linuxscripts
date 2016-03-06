@@ -2,4 +2,4 @@
 
 
 cd /root/scripts
-./rezo > /root/scripts/init-rezo.log
+./rezo > /root/logs/init-rezo.log

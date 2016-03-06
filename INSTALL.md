@@ -7,6 +7,9 @@
 
 	mkdir /root/logs
 	mkdir /root/backups
+
+Ceux si sont créés automatiquement lors de l'utilisation de rezen, initen, backup, naten
+
 	mkdir /root/scripts/rezo.d/rezo-enabled
 	mkdir /root/scripts/nat.d/nat-enabled
 	mkdir /root/scripts/init.d/init-enabled
