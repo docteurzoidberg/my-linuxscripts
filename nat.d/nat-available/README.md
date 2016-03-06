@@ -1,7 +1,9 @@
 # nat.d/nat-available
 
-Définition des redirection de port NAT avec iptables
-Les fichiers sont parsés par le script /root/scripts/nat, qui est lui même lancé par /root/scripts/rezo
+Contient les fichiers nat "disponibles"
+
+- Définition des redirection de port NAT avec iptables
+- Les fichiers sont parsés par le script /root/scripts/nat, qui est lui même lancé par /root/scripts/rezo
 
 ### Syntaxe:
   titreservice:(tcp/udp) ip_externe:port_externe ip_privee_ct:port_ct

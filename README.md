@@ -8,10 +8,11 @@
 
 	apt-get install wget curl ca-certificates openssl
 
+### Lire INSTALL.md
+
 ### facultatif: oh-my-zsh
 
 	apt-get install git zsh
-
 
 # Scripts rezo
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 
 #mikoscripts init sample
-#fout la date a la suite du fichier /root/logs/initsample.log
+#fout la date a la suite du fichier /root/logs/init-sample.log
 
 DATE=$(date)
-LOGFILE="/root/logs/inisample.log"
+LOGFILE="/root/logs/init-sample.log"
 
 cd /root/scripts/
 echo "Le systeme à booté à ${DATE}" >> ${LOGFILE}

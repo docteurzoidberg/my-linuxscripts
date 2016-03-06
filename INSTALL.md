@@ -1,7 +1,6 @@
-//TODO: DOC :D
-
 # 1) Cloner le repo dans /root/scripts
 
+  apt-get install git
 	git clone https://github.com/docteurzoidberg/my-proxmox-scripts.git /root/scripts
 
 # 2) Re-creer les dossiers manquants
@@ -40,7 +39,7 @@
 	cd /root/scripts
 
 ##Verification init
-	cat /root/logs/initsample.log
+	cat /root/logs/init-sample.log
 
 ##Verification nat
 	./utils/shownat
