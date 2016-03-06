@@ -70,10 +70,15 @@ fi
 
 # Déjà désactivé ?
 if ! [ -e ${SCRIPTS_PATH}/${DIR_ENABLED}/${SITENAME} ]; then
-        jaune "Ce script est déjà désactivé ! ! !"
+        jaune "Ce script n'est pas actif ! ! !"
         exit 1
 fi
 
+# Présent ?
+if ! [ -e ${SCRIPTS_PATH}/${DIR_AVAILABLE}/${SITENAME} ]; then
+        rouge "Le script n'existe pas dans available ! ! !"
+        exit 1
+fi
 
 # Traitement :
 if ! rm ${SCRIPTS_PATH}/${DIR_ENABLED}/${SITENAME} 2>/dev/null; then
