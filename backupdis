@@ -5,4 +5,4 @@
 export DEFAULT_FOLDER="backup"
 export DEFAULT_PATH="/root/scripts/backup.d"
 
-./scriptdis "backup$1"
+./scriptdis "backup-$1"

@@ -2,9 +2,9 @@
 
 # 1) Cloner le repo dans /root/scripts
 
-	git clone blablablablabla /root/scripts
+	git clone https://github.com/docteurzoidberg/my-proxmox-scripts.git /root/scripts
 
-# 2) Reecreer les dossiers manquants
+# 2) Re-creer les dossiers manquants
 
 	mkdir /root/logs
 	mkdir /root/backups
@@ -16,7 +16,7 @@
 # 3) Configurer le script d'init
 
 	cd /etc/init.d
-	ln -s /root/scripts/init rootscripts-init	
+	ln -s /root/scripts/init rootscripts-init
 	update-rc.d rootscripts-init defaults
 
 # 4) Activer le script sample et rezo à l'init
@@ -44,5 +44,3 @@
 
 ##Verification nat
 	./utils/shownat
-
-
