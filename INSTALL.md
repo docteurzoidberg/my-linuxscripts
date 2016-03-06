@@ -1,6 +1,6 @@
 # 1) Cloner le repo dans /root/scripts
 
-  apt-get install git
+	apt-get install git
 	git clone https://github.com/docteurzoidberg/my-proxmox-scripts.git /root/scripts
 
 # 2) Re-creer les dossiers manquants
@@ -27,13 +27,40 @@ Ceux si sont créés automatiquement lors de l'utilisation de rezen, initen, bac
 	./initen sample
 	./initen rezo
 
-# 5) Appliquer la conf nat & rezo
+# 5) Creation fichier rezo & nat pour un / des CT
+
+### fichier rezo (exemple pour ct 100)
+
+	cd /root/scripts/rezo.d/rezo-available
+	cp netsample net100
+
+Editer le fichier net100 pour qu'il utilise les bonne ip/variables	
+
+Activation du fichier net100
+
+	cd /root/scripts
+	./rezen 100
+
+
+### fichier nat (exemple pour ct 100)
+
+        cd /root/scripts/nat.d/nat-available
+        cp netsample vm100
+
+Editer le fichier vm100 et ajouter les redirections IP:PORT
+
+Activation du fichier vm100
+
+        cd /root/scripts
+        ./naten 100
+
+# 6) Appliquer la conf nat & rezo
 
 	cd /root/scripts
 	./rezo
 
 
-# 6) Rebooter pour verifier
+# 7) Rebooter pour verifier
 
 	reboot
 
