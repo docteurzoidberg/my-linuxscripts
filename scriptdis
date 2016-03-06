@@ -29,6 +29,11 @@ DIR_AVAILABLE="${SCRIPTS_FOLDERS_NAME}-available"       # fichiers configurés
 DIR_ENABLED="${SCRIPTS_FOLDERS_NAME}-enabled"           # fichiers activés
 
 
+if [[ -d "${SCRIPTS_PATH}" ]]
+then
+	mkdir -p "${SCRIPTS_PATH}/${SCRIPTS_FOLDERS_NAME}-available"
+	mkdir -p "${SCRIPTS_PATH}/${SCRIPTS_FOLDERS_NAME}-enabled"
+fi
 
 
 
