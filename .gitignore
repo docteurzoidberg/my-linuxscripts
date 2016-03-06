@@ -1,8 +1,8 @@
 ./config
 
 nat.d/nat-available/*
-rezo.d/nat-available/*
-backup.d/init-available/*
+rezo.d/rezo-available/*
+backup.d/backup-available/*
 init.d/init-available/*
 
 nat.d/nat-enabled/*
