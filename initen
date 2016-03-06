@@ -1,0 +1,8 @@
+#!/bin/bash
+
+. ./functions
+
+export DEFAULT_FOLDER="init"
+export DEFAULT_PATH="/root/scripts/init.d"
+
+./scripten "init-$1"

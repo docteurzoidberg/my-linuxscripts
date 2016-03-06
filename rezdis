@@ -1,0 +1,8 @@
+#!/bin/bash
+
+. ./functions
+
+export DEFAULT_FOLDER="rezo"
+export DEFAULT_PATH="/root/scripts/rezo.d"
+
+./scriptdis "net$1"

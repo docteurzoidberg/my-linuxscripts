@@ -1,0 +1,95 @@
+#!/bin/bash
+
+VERT="\\033[1;32m"
+NORMAL="\\033[0;39m"
+ROUGE="\\033[1;31m"
+ROSE="\\033[1;35m"
+BLEU="\\033[1;34m"
+BLANC="\\033[0;02m"
+BLANCLAIR="\\033[1;08m"
+JAUNE="\\033[1;33m"
+CYAN="\\033[1;36m"
+
+
+FIGLETCMD=figlet
+TOILETCMD=toilet
+COWSAYCMD=/usr/games/cowsay
+
+
+function print {
+        echo -e "${ROSE}$1${NORMAL}"
+}
+
+function jaune {
+        echo -e "${JAUNE}$1${NORMAL}"
+}
+function bleu {
+	echo -e "${BLEU}$1${NORMAL}"
+}
+function cyan {
+        echo -e "${CYAN}$1${NORMAL}"
+}
+
+function rouge {
+	echo -e "${ROUGE}$1${NORMAL}"
+}
+function vert {
+	echo -e "${VERT}$1${NORMAL}"
+}
+
+
+
+function barre {
+	printf '.%.0s' {1..80}
+	printf '\n'
+	#echo -e "--------------------------------"
+}
+
+function encadre {
+
+	if which $TOILETCMD >/dev/null; then
+		toiletheader "$1"
+	elif which $FIGLETCMD >/dev/null; then
+		figletheader "$1"
+	elif which $COWSAYCMD >/dev/null; then
+		cowsayheader "$1"
+	else
+
+		echo -e ${ROSE}
+		barre
+		echo -e $1
+		barre
+		echo -e ${NORMAL}
+	fi
+}
+
+
+function toiletheader {
+	$TOILETCMD -f pagga -F border -F gay $1
+}
+
+function figletheader {
+	$FIGLETCMD $1
+}
+
+function cowsayheader {
+	$COWSAYCMD $1
+}
+
+function toilettiny {
+	$TOILETCMD -f digital -F crop $1
+}
+
+
+function commande {
+	echo -e "$1"
+	$1
+}
+
+function commanded {
+	echo -e "$1"
+}
+
+function info {
+	jaune $1
+}

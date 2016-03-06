@@ -1,0 +1,80 @@
+#!/bin/bash
+
+
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+
+
+SCRIPTS_PATH='/root/scripts/rezo.d'
+SCRIPTS_ENABLED='rezo-enabled'
+VERSION=1.0
+
+. ./config
+. ./functions
+
+
+
+encadre "REZO SCRIPT V$VERSION"
+
+jaune "Réseaux actifs: "
+
+for site in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
+        rouge "(*) ${site}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
+done;
+
+
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+
+
+jaune "Préparation des tables et regles par defaut..."
+
+
+#nettoi
+commande "iptables -F FORWARD"
+
+# trafic routé bloqué par défaut
+#commande "iptables -P FORWARD DROP"
+
+# trafic routé vers internet autorisé
+#commande "iptables -A FORWARD ! -i vmbr0 -o vmbr0 -j ACCEPT"
+
+# trafic retour d'internet routé autorisé
+#commande "iptables -A FORWARD -i vmbr0 ! -o vmbr0 -m state --state ESTABLISHED,RELATED -j ACCEPT"
+
+
+
+#NAT
+jaune "Flush des tables de NAT..."
+
+commande "iptables -t nat -F"
+commande "iptables -t nat -X"
+commande "iptables -t nat -Z"
+
+commande "iptables -t nat -F POSTROUTING"
+
+jaune "Lancement des scripts..."
+
+for site in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
+        rouge "-> ${site}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
+        chmod +x ${site}
+        commande "${site}"
+done;
+
+
+
+
+
+# trafic entre eth1 et eth2 autorisé
+#iptables -A FORWARD -i eth2 -o eth1 -j ACCEPT
+#iptables -A FORWARD -i eth1 -o eth2 -j ACCEPT
+
+#iptables -t nat -F POSTROUTING
+
+
+./nat
+
+
+#commande "iptables -t nat -A POSTROUTING -o vmbr0 -j MASQUERADE"

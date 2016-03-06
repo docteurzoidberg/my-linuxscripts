@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+cd /root/scripts
+./rezo > /root/scripts/init-rezo.log

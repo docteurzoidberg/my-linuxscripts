@@ -1,0 +1,72 @@
+#!/bin/bash
+
+
+. ./config
+. ./functions
+
+
+#--------------------------------------
+SCRIPTS_PATH='/root/scripts/nat.d'
+SCRIPTS_ENABLED='nat-enabled'
+VERSION='1.0'
+#--------------------------------------
+
+
+encadre "nat script v$VERSION"
+
+echo
+
+echo "IP NAT => ${IP_NAT}"
+
+
+
+
+#Ajoute une regle dans iptables (table nat)
+function addNat {
+	
+   	cmdnat="iptables -t nat -A PREROUTING -p $2 -d $3 --dport $4 -i vmbr0 -j DNAT --to-destination $5:$6"
+	echo -e "${CYAN}$1 ($2)${NORMAL}: ${cmdnat}"
+	${cmdnat}
+}
+
+#Parse un fichier de config type nat.conf
+function parseNat {
+
+	# Epuration du ficheir de configuration
+	cat $1 | grep -v "^\s*#" | grep -v "^\s*$" |sed -e 's/^\s*//g' > /tmp/nat.$$.txt
+
+	touch /tmp/nat.$$.out
+
+	while read line
+	do
+		eval echo "$line" >> /tmp/nat.$$.out
+	done < /tmp/nat.$$.txt
+
+	#cat /tmp/nat.$$.out
+
+	while IFS=:- read label mode ipout portout ipin portin
+	do
+		addNat $label $mode $ipout $portout $ipin $portin
+	done < /tmp/nat.$$.out
+
+	rm /tmp/nat.$$.txt
+	rm /tmp/nat.$$.out
+
+}
+
+
+#Pour chaque fichier de config dans nat.d
+for site in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
+
+	if [ -f ${site} ]
+	then
+		rouge "(*) ${site}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
+                parseNat "${site}"
+	fi
+
+done;
+
+
+
+
+echo ${MIKO}

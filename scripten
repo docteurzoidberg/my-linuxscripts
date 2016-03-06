@@ -1,0 +1,85 @@
+#!/bin/bash
+
+. ./functions
+
+
+# Dossiers de scripts par défaut si les variables ne sont pas fournies par un script externe !
+
+if [[ -z "${DEFAULT_FOLDER}" ]]
+then
+	DEFAULT_FOLDER="scripts"
+fi
+
+if [[ -z "${DEFAULT_PATH}" ]]
+then
+	DEFAULT_PATH="/root/scripts/scripts.d"
+fi
+
+
+barre
+echo -e  "${VERT}[EN SCRIPT]${NORMAL} - ${ROSE}${DEFAULT_PATH}/${DIR_AVAILABLE}${NORMAL}"
+barre
+
+
+SCRIPTS_PATH=${DEFAULT_PATH}
+SCRIPTS_FOLDERS_NAME=${DEFAULT_FOLDER}
+
+
+DIR_AVAILABLE="${SCRIPTS_FOLDERS_NAME}-available"       # fichiers configurés
+DIR_ENABLED="${SCRIPTS_FOLDERS_NAME}-enabled"           # fichiers activés
+
+
+
+# Quel script ?
+if [ -z ${1} ]; then
+
+	NB_SCRIPTS=$(ls -A1 ${SCRIPTS_PATH}/${DIR_AVAILABLE}/* 2>/dev/null | wc -l)
+
+	if [ "$NB_SCRIPTS" -lt 1 ]
+	then
+		jaune "${ROUGE}Pas de scripts disponibles dans le dossier ${JAUNE}${SCRIPTS_PATH}/${DIR_AVAILABLE}${NORMAL}"
+		exit 1
+	fi
+
+        echo "Quel script voulez vous activer ?"
+
+        echo "Liste des scripts disponibles: "
+
+        for site in ${SCRIPTS_PATH}/${DIR_AVAILABLE}/*; do
+		if [[ -f $site ]]
+		then
+                	echo -e "(${ROUGE}*${NORMAL})${CYAN}${site}${NORMAL}" | sed -e "s,${SCRIPTS_PATH}/${DIR_AVAILABLE}/,,g"
+		fi
+        done;
+
+	echo -n "Nom du script ? "
+
+	read SITENAME
+
+else
+        SITENAME=${1}
+fi
+
+
+
+
+if [ -e ${SCRIPTS_PATH}/${DIR_ENABLED}/${SITENAME} -o -e ${SCRIPTS_PATH}/${DIR_ENABLED}/${PRIORITY}-${SITENAME} ]; then
+	jaune "Le script est déjà activé ! ! !"
+	exit 0
+fi
+
+# Présent ?
+if ! [ -e ${SCRIPTS_PATH}/${DIR_AVAILABLE}/${SITENAME} ]; then
+	jaune "Le script n'existe pas ! ! !"
+	exit 1
+fi
+
+
+# Traitement :
+if [ ${SITENAME} = "default" ]; then
+	ln -sf ${SCRIPTS_PATH}/${DIR_AVAILABLE}/${SITENAME} ${SCRIPTS_PATH}/${DIR_ENABLED}/${PRIORITY}-${SITENAME}
+else
+	ln -sf ${SCRIPTS_PATH}/${DIR_AVAILABLE}/${SITENAME} ${SCRIPTS_PATH}/${DIR_ENABLED}/${SITENAME}
+fi
+
+

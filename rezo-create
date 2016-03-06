@@ -1,0 +1,105 @@
+#!/bin/bash
+
+REZO_SCRIPTS_PATH='/root/scripts/rezo.d/rezo-available'
+NAT_SCRIPTS_PATH='/root/scripts/nat.d/nat-available'
+
+VERSION='0.1'
+
+. ./config
+. ./functions
+
+
+function testNatFile {
+        f="$NAT_SCRIPTS_PATH/vm$1";
+        if [ -f $f ]; then
+                rouge "✗ Le script nat pour $1 existe deja"
+		failScripts="true"
+	else
+		vert "✓ Le script nat pour $1 n'éxiste pas"
+        fi
+}
+
+function testRezoFile {
+	f="$REZO_SCRIPTS_PATH/net$1";
+	if [ -f $f ]; then
+		rouge "✗ Le script rezo pour $1 existe deja"
+		failScripts="true"
+	else
+		vert "✓ Le script rezo pour $1 n'éxiste pas"
+	fi
+}
+
+function testVzId {
+	if [ $1 -gt 254 ] || [ $1 -lt 1 ];  then
+		rouge "✗ L'id du conteneur doit etre entre 1 et 254"
+		fail="true"
+	fi
+}
+
+
+
+encadre "REZO-CREATE V$VERSION"
+
+barre
+
+testNatFile $1
+testRezoFile $1
+
+barre
+
+VZID=$1
+
+OLDANSIPROMPT=$ANSIPROMPT
+
+function askScripts {
+	fail=""
+	while true; do
+            ANSIPROMPT="${BLEU}Créer les scripts nat et rezo ? ${NORMAL}"
+	    read -p "$(echo -e "$ANSIPROMPT")" yn
+	    case $yn in
+	        [Yy]* ) makeScripts; break;;
+	        [Nn]* ) break;;
+	        * ) echo "Please answer yes or no.";;
+	    esac
+	done
+}
+
+function makeScripts {
+	sed -e "s/123/${VZID}/g" "${REZO_SCRIPTS_PATH}/netsample" > "${REZO_SCRIPTS_PATH}/net${VZID}"
+	#commande "$cmd"
+	sed -e "s/123/${VZID}/g" "${NAT_SCRIPTS_PATH}/vmsample" > "${NAT_SCRIPTS_PATH}/vm${VZID}"
+	#commande "$cmd"
+}
+
+function askRunScripts {
+        fail=""
+        while true; do
+            ANSIPROMPT="${BLEU}Activer et lancer les scripts nat et rezo ? ${NORMAL}"
+            read -p "$(echo -e "$ANSIPROMPT")" yn
+            case $yn in
+                [Yy]* ) runScripts; break;;
+                [Nn]* ) break;;
+                * ) echo "Please answer yes or no.";;
+            esac
+        done
+}
+
+function runScripts {
+	cmd="./rezen $VZID"
+	commande "$cmd"
+	cmd="./naten $VZID"
+	commande "$cmd"
+	cmd="./rezo"
+	commande "$cmd"
+}
+
+
+if [ "$failVzStatus" != "true" ] && [ "$fail" != "true" ]; then
+        askScripts
+fi
+
+askRunScripts
+
+ANSIPROMPT=$OLDANSIPROMPT
+
+jaune "Fin du script rezo-create."

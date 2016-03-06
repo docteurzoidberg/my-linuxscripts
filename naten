@@ -1,0 +1,8 @@
+#!/bin/bash
+
+. ./functions
+
+export DEFAULT_FOLDER="nat"
+export DEFAULT_PATH="/root/scripts/nat.d"
+
+./scripten "vm$1"

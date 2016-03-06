@@ -1,0 +1,14 @@
+#!/bin/bash
+
+
+#Fichier de config pour definir des variables utilisées dans les 
+scripts
+
+
+#IP_NAT = ip publique de votre choix
+export IP_NAT='10.11.12.13'
+
+#EXEMPLE pour des ip failovers
+export IP_FAILOVER1='10.0.0.1'
+export IP_FAILOVER2='10.0.0.2'
+export IP_FAILOVER3='10.0.0.3'

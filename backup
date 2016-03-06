@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# TODO !
+# pour chaque script dans backup-enabled/ lancer le script
+
+
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+
+
+ROOT_PATH='/root/scripts'
+SCRIPTS_PATH='/root/scripts/backup.d'
+SCRIPTS_ENABLED='backup-enabled'
+VERSION=0.1
+
+cd $ROOT_PATH
+
+. ./config
+. ./functions
+
+encadre "BACKUPS SCRIPT V$VERSION"
+
+jaune "Scripts actifs: "
+
+for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
+        rouge "(*) ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
+done;
+
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+#------------------------------------------------------------------------
+
+jaune "Lancement des scripts..."
+
+for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
+        rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
+        chmod +x ${script}
+        commande "${script}"
+done;
+
+
+

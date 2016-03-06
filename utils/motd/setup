@@ -1,0 +1,11 @@
+#backup fichier motd au cas ou
+cat /etc/motd > ./motd_backup
+
+#figlet, toilet, cowsay
+apt-get install figlet toilet cowsay
+
+chmod +x ./update-motd.d/*
+
+rm /etc/motd
+
+echo ./usage

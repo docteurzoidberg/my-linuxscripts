@@ -1,0 +1,8 @@
+#!/bin/bash
+
+[ -r /etc/lsb-release ] && . /etc/lsb-release
+
+toilet -F gay -f standard $(hostname)
+toilet -F gay -f standard Tatinet.org
+
+printf '\n'

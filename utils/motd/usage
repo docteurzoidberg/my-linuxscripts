@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo "Remplace le motd statique par un motd dynamique"
+
+echo 
+echo
+
+echo "Lancer ./update-motd"
+
+echo
+
+echo "Puis editer /etc/pam.d/sshd pour que ca ressemble à ceci: "
+
+echo 
+echo
+
+cat ./etc/pam.d/sshd
