@@ -1,0 +1,29 @@
+#!/bin/bash
+​
+function post_to_slack () {
+  # format message as a code block ```${msg}```
+  SLACK_MESSAGE="\`\`\`$1\`\`\`"
+  SLACK_URL=https://hooks.slack.com/services/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
+ 
+  case "$2" in
+    INFO)
+      SLACK_ICON=':slack:'
+      ;;
+    WARNING)
+      SLACK_ICON=':warning:'
+      ;;
+    ERROR)
+      SLACK_ICON=':bangbang:'
+      ;;
+    *)
+      SLACK_ICON=':slack:'
+      ;;
+  esac
+ 
+  curl -X POST --data "payload={\"text\": \"${SLACK_ICON} ${SLACK_MESSAGE}\"}" ${SLACK_URL}
+}
+​
+post_to_slack "CT 151 is UP" "WARNING"
+post_to_slack "CT 151 is DOWN" "ERROR"
+
+exit 0
