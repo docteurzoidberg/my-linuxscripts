@@ -1,8 +1,7 @@
 #!/bin/bash
 
 
-#Fichier de config pour definir des variables utilisées dans les 
-scripts
+#Fichier de config pour definir des variables utilisées dans les scripts
 
 
 #IP_NAT = ip publique de votre choix
