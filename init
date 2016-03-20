@@ -21,23 +21,84 @@ cd $ROOT_PATH
 
 encadre "INIT SCRIPT V$VERSION"
 
-jaune "Scripts actifs: "
 
-for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
-        rouge "(*) ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
-done;
+function list_enabled_scripts {
+
+	jaune "Scripts actifs: "
+
+	for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
+        	rouge "(*) ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
+	done;
+}
+
+
 
 #------------------------------------------------------------------------
 #------------------------------------------------------------------------
 #------------------------------------------------------------------------
 
-jaune "Lancement des scripts..."
 
-for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
-        rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
-        chmod +x ${script}
-        commande "${script}"
-done;
+function start_scripts {
+
+	jaune "Lancement des scripts..."
+
+	for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
+        	rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
+        	chmod +x ${script}
+        	commande "${script} start"
+	done;
+}
+
+
+function stop_scripts {
+	jaune "Arrêt des services..."
+
+	for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
+                rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
+                chmod +x ${script}
+                commande "${script} stop"
+        done;
+}
+
+function command_script {
+	case $2 in
+	"enable")
+		echo "todo: enable script"
+        	;;
+	"disable")
+		echo "todo: disable script"
+        	;;
+	*)
+		if [[ ! -z $2 ]]
+		then
+			rouge "Commande inconnue: $2"
+		fi
+        	jaune "Utilisation: "
+        	echo "init {scriptname} enable"
+        	echo "init {scriptname} disable"
+        	echo "init start"
+        	echo "init stop"
+        	;;
+	esac
+
+}
+
+case $1 in
+"start")
+	start_scripts
+	;;
+"stop")
+	stop_scripts
+	;;
+*)
+	if [[ ! -z $1 ]]
+	then
+		rouge "Commande inconnue: $1"
+		echo "usage:"
+	fi
+	command_script $1 $2
+	;;
+esac
 
 
 

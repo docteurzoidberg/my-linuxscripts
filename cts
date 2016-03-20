@@ -53,6 +53,7 @@ function testusage_commande {
 
 	if test -z $2
 	then
+		jaune "Utilisation: "
 		usage_commande_pct $1
 		usage_commande_rezo $1
 		usage_commande_nat $1
@@ -94,11 +95,24 @@ function test_commande {
 }
 
 function script_enable {
-	echo "TODO: enable script $2 for CT$1"
+	FOLDER_SCRIPT="${SCRIPTS_PATH}"
+	FOLDER_AVAILABLE="$3/$2-available"
+	FOLDER_ENABLED="$3/$2-enabled"
+	FOLDER_SCRIPTNAME="$4"
+	if [[ ! -d ${FOLDER_ENABLED} ]]
+	then
+		commande "mkdir ${FOLDER_ENABLED}"
+	fi
+	command_script_enable ${FOLDER_SCRIPT} ${FOLDER_AVAILABLE} ${FOLDER_ENABLED} ${FOLDER_SCRIPTNAME}
 }
 
 function script_disable {
-	echo "TODO: disable script $2 for CT$1"
+        FOLDER_SCRIPT="${SCRIPTS_PATH}"
+        FOLDER_AVAILABLE="$3/$2-available"
+        FOLDER_ENABLED="$3/$2-enabled"
+        FOLDER_SCRIPTNAME="$4"
+
+        command_script_disable ${FOLDER_SCRIPT} ${FOLDER_AVAILABLE} ${FOLDER_ENABLED} ${FOLDER_SCRIPTNAME}
 }
 
 function script_edit {
@@ -128,16 +142,19 @@ function commande_pct {
 function commande_rezo {
         case $3 in
         "enable")
-		script_enable $1 $2
+		script_enable $1 $2 "rezo.d" "net$1"
 		;;
 	"disable")
-		script_disable $1 $2
+		script_disable $1 $2 "rezo.d" "net$1"
 		;;
 	"edit")
-                script_edit $1 $2
+                script_edit $1 $2 "rezo.d" "net$1"
         	;;
 	*)
-                rouge "Commande $2 inconnue: $3"
+		if [[ ! -z $3 ]]
+		then
+                	rouge "Commande $2 inconnue: $3"
+		fi
 		jaune "Utilisation:"
 		usage_commande_rezo $1
                 exit -1
@@ -148,17 +165,19 @@ function commande_rezo {
 function commande_nat {
 	case $3 in
 	"enable")
-		script_enable $1 $2
+		script_enable $1 $2 "nat.d" "vm$1"
 		;;
 	"disable")
-		script_disable $1 $2
+		script_disable $1 $2 "nat.d" "vm$1"
 		;;
 	"edit")
-		script_edit $1 $2
+		script_edit $1 $2 "nat.d" "vm$1"
 		;;
 	*)
-		if(
-		rouge "Commande $2 inconnue: $3"
+		if [[ ! -z $3 ]]
+		then
+			rouge "Commande $2 inconnue: $3"
+		fi
 		jaune "Utilisation:"
 		usage_commande_nat $1
 		exit -1
@@ -171,7 +190,7 @@ function commande_nat {
 
 testusage $1
 
-testct $1
+#testct $1
 
 testusage_commande $1 $2 $3
 

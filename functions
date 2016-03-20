@@ -93,3 +93,87 @@ function commanded {
 function info {
 	jaune $1
 }
+
+
+#Lien symbolique script $type-available/$script $type-enabled/script
+function command_script_enable {
+        ROOT_DIR=$1
+        AVAILABLE_DIR=$2
+        ENABLED_DIR=$3
+        SCRIPT_NAME=$4
+
+        #ROOT_DIR=/root/my-proxmox-scripts
+        #AVAILABLE_DIR=rezo.d/rezo-available
+        #ENABLED_DIR=rezo.d/rezo-enabled
+        #SCRIPT_NAME=net100
+
+        TEST_AVAILABLE="${ROOT_DIR}/${AVAILABLE_DIR}/${SCRIPT_NAME}"
+        TEST_ENABLED="${ROOT_DIR}/${ENABLED_DIR}/${SCRIPT_NAME}"
+
+        #Test already enabled
+        if [[ -f "${TEST_ENABLED}" ]]
+        then
+                jaune "Le script est déjà actif"
+                exit 0
+        fi
+
+        #Test available
+        if [[ ! -f "${TEST_AVAILABLE}" ]]
+        then
+                rouge "Le script ${TEST_AVAILABLE} n'éxiste pas !"
+                exit -1
+        fi
+
+        echo -e "Création du lien symbolique ${CYAN}${TEST_ENABLED}${NORMAL} vers ${CYAN}${TEST_AVAILABLE}${NORMAL}"
+        #TODO
+
+        commande "ln -sf ${TEST_AVAILABLE} ${TEST_ENABLED}"
+        if [[ $? -eq 0 ]]
+        then
+                vert "Script ${SCRIPT_NAME} activé :-)"
+        else
+                rouge "Erreur lors de l'activation du script :-("
+        fi
+}
+
+#Suppression lien symbolique script $type-available/$script $type-enabled/script
+function command_script_disable {
+	ROOT_DIR=$1
+	AVAILABLE_DIR=$2
+	ENABLED_DIR=$3
+	SCRIPT_NAME=$4
+
+	#ROOT_DIR=/root/my-proxmox-scripts
+	#AVAILABLE_DIR=rezo.d/rezo-available
+	#ENABLED_DIR=rezo.d/rezo-enabled
+	#SCRIPT_NAME=net100
+
+	TEST_AVAILABLE="${ROOT_DIR}/${AVAILABLE_DIR}/${SCRIPT_NAME}"
+	TEST_ENABLED="${ROOT_DIR}/${ENABLED_DIR}/${SCRIPT_NAME}"
+
+	#Test already enabled
+	if [[ ! -f "${TEST_ENABLED}" ]]
+	then
+		jaune "Le script n'est pas actif"
+		exit 0
+	fi
+
+	#Test available
+	if [[ ! -f "${TEST_AVAILABLE}" ]]
+	then
+		rouge "Le script ${TEST_AVAILABLE} n'éxiste pas !"
+		exit -1
+	fi
+
+	echo -e "Suppression lien symbolique ${CYAN}${TEST_ENABLED}${NORMAL}"
+
+	commande "rm ${TEST_ENABLED}"
+	if [[ $? -eq 0 ]]
+	then
+		vert "Script ${SCRIPT_NAME} désactivé :-)"
+	else
+		rouge "Erreur lors de désactivation du script :-("
+	fi
+}
+
+
