@@ -81,7 +81,7 @@ function toilettiny {
 }
 
 
-function commande {
+function fn_commande {
 	echo -e "$1"
 	$1
 }
@@ -94,9 +94,14 @@ function info {
 	jaune $1
 }
 
+function fn_usage_line {
+  echo -e "${NORMAL}$1${CYAN}$2${NORMAL}"
+}
+
+
 
 #Lien symbolique script $type-available/$script $type-enabled/script
-function command_script_enable {
+function fn_command_script_enable {
         ROOT_DIR=$1
         AVAILABLE_DIR=$2
         ENABLED_DIR=$3
@@ -137,7 +142,7 @@ function command_script_enable {
 }
 
 #Suppression lien symbolique script $type-available/$script $type-enabled/script
-function command_script_disable {
+function fn_command_script_disable {
 	ROOT_DIR=$1
 	AVAILABLE_DIR=$2
 	ENABLED_DIR=$3
@@ -175,5 +180,3 @@ function command_script_disable {
 		rouge "Erreur lors de désactivation du script :-("
 	fi
 }
-
-

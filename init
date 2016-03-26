@@ -1,31 +1,40 @@
 #!/bin/bash
-
-# TODO !
-# pour chaque script dans init-enabled/ lancer le script avec les parametres LSB standards si disponibles
-
-
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-
-
 SCRIPTS_PATH="/root/my-proxmox-scripts"
 FOLDER_ENABLED="init.d/init-enabled"
 FOLDER_AVAILABLE="init.d/init-available"
 SCRIPT_PREFIX="init-"
-
-VERSION=0.1
-
+VERSION='0.1'
+#--------------------------------------
 
 cd $SCRIPTS_PATH
 
 . ./config
 . ./functions
 
-encadre "INIT SCRIPT V$VERSION"
+encadre "init script v$VERSION"
 
+#--------------------------------------
+# usage
+#--------------------------------------
 
-function list_enabled_scripts {
+function usage {
+
+	jaune "Utilisation: "
+
+	echo -e "init {scriptname} enable \t ${CYAN}Active le script {scriptname}${NORMAL}"
+	echo -e "init {scriptname} disable \t ${CYAN}Désactive le script {scriptname}${NORMAL}"
+	echo -e "init {scriptname} show \t ${CYAN}Affiche le script {scriptname}${NORMAL}"
+	echo -e "init {scriptname} edit \t ${CYAN}Edite le script {scriptname}${NORMAL}"
+	echo -e "init start \t\t\t ${CYAN}Lance les scripts actifs avec la paramètre start${NORMAL}"
+	echo -e "init stop \t\t\t ${CYAN}Lance les scripts actifs avec le paramètre stop${NORMAL}"
+	echo -e "init scripts \t\t\t ${CYAN}Affiche les scripts actifs${NORMAL}"
+}
+
+#--------------------------------------
+# commande_*
+#--------------------------------------
+
+function commande_scripts {
 
 	jaune "Scripts actifs: "
 
@@ -34,81 +43,100 @@ function list_enabled_scripts {
 	done;
 }
 
-
-
-
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-
-function show_scripts {
-	list_enabled_scripts
-}
-
-
-function start_scripts {
+function commande_start {
 
 	jaune "Lancement des scripts..."
 
 	for script in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
-        	rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
-        	chmod +x ${script}
-        	commande "${script} start"
+  	rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+  	chmod +x ${script}
+  	commande "${script} start"
 	done;
 }
 
-
-function stop_scripts {
+function commande_stop {
 
 	jaune "Arrêt des services..."
 
 	for script in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
-                rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
-                chmod +x ${script}
-                commande "${script} stop"
-        done;
+    rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+    chmod +x ${script}
+    commande "${script} stop"
+  done;
 }
 
-function command_script {
+#--------------------------------------
+# commande_scriptname_*
+#--------------------------------------
+
+function commande_scriptname_enable {
+    if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
+    then
+      commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
+    fi
+    fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
+
+function commande_scriptname_disable {
+    fn_command_script_disable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
+
+function commande_scriptname_edit {
+  	echo "todo: edit $1"
+}
+
+function commande_scriptname_show {
+  	echo "todo: show $1"
+}
+
+#--------------------------------------
+# parse_*
+#--------------------------------------
+
+function parse_commande_scriptname {
 
 	case $2 in
 	"enable")
-		if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
-		then
-			commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
-		fi
-		command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
-        	;;
+		commande_scriptname_enable $1
+  	;;
 	"disable")
-		command_script_disable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
-        	;;
+		commande_scriptname_disable $1
+  	;;
+	"show")
+		commande_scriptname_edit $1
+  	;;
+	"edit")
+		commande_scriptname_edit $1
+  	;;
 	*)
 		if [[ ! -z $2 ]]
 		then
 			rouge "Commande inconnue: $2"
 		fi
-        	jaune "Utilisation: "
-        	echo -e "init {scriptname} enable \t ${CYAN}Active le script {scriptname}${NORMAL}"
-        	echo -e "init {scriptname} disable \t ${CYAN}Désactive le script {scriptname}${NORMAL}"
-        	echo -e "init start \t\t\t ${CYAN}Lance les scripts actifs avec la paramètre start${NORMAL}"
-        	echo -e "init stop \t\t\t ${CYAN}Lance les scripts actifs avec le paramètre stop${NORMAL}"
-		echo -e "init scripts \t\t\t ${CYAN}Affiche les scripts actifs${NORMAL}"
-        	;;
+  	usage
+		;;
 	esac
-
 }
 
-case $1 in
-"scripts")
-	show_scripts
-	;;
-"start")
-	start_scripts
-	;;
-"stop")
-	stop_scripts
-	;;
-*)
-	command_script $1 $2
-	;;
-esac
+function parse_commande {
+	case $1 in
+	"scripts")
+		commande_scripts
+		;;
+	"start")
+		commande_start
+		;;
+	"stop")
+		commande_stop
+		;;
+	*)
+		parse_commande_scriptname $1 $2
+		;;
+	esac
+}
+
+#--------------------------------------
+# MAIN !
+#--------------------------------------
+
+parse_commande $1 $2

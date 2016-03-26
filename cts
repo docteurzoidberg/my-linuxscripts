@@ -1,33 +1,36 @@
 #!/bin/bash
+SCRIPTS_PATH="/root/my-proxmox-scripts"
+VERSION='0.1'
+#--------------------------------------
 
-#lance les includes
+cd $SCRIPTS_PATH
 
 . ./config
 . ./functions
 
-SCRIPTS_PATH="/root/my-proxmox-scripts"
+encadre "cts script v$VERSION"
 
+#--------------------------------------
+# usage
+#--------------------------------------
 
-function usage_commande_pct {
-	echo "cts {ID} start \t\t"
-        echo "cts {ID} stop \t\t"
-        echo "cts {ID} enter \t\t"
+function usage {
+	echo -e "cts {ID} enter \t\t"
+	echo -e "cts {ID} start \t\t"
+  echo -e "cts {ID} stop \t\t"
+  echo -e "cts {ID} backup \t\t"
+	echo -e "cts {ID} destroy \t\t"
+
+	echo -e "cts show \t\t"
+	echo -e "cts startall \t\t"
+	echo -e "cts stopall \t\t"
 }
 
-function usage_commande_rezo {
-        echo "cts {ID} rezo enable \t\t"
-        echo "cts {ID} rezo disable \t\t"
-        echo "cts {ID} rezo edit \t\t"
-}
+#--------------------------------------
+# internal
+#--------------------------------------
 
-function usage_commande_nat {
-	echo "cts {ID} nat enable \t\t"
-        echo "cts {ID} nat disable \t\t"
-        echo "cts {ID} nat edit \t\t"
-}
-
-
-function testct {
+function internal_testct {
 
 	TESTFOLDER="${SCRIPTS_PATH}/cts.d/cts-available/CT$1"
 
@@ -41,162 +44,97 @@ function testct {
 	fi
 }
 
-function testusage {
-	if test -z $1
-	then
-		echo "Utilisation: todo\n"
-		exit -1
-	fi
+#--------------------------------------
+# commande_*
+#--------------------------------------
+
+function commande_show {
+	jaune "TODO: show all CT statuses..."
 }
 
-function testusage_commande {
-
-	if test -z $2
-	then
-		jaune "Utilisation: "
-		usage_commande_pct $1
-		usage_commande_rezo $1
-		usage_commande_nat $1
-		exit -1
-	else
-		case $2 in
-        	"start"|"stop"|"enter"|"rezo"|"nat"|"backup"|"monitoring")
-                	#echo "commande ok: $2\n"
-                	;;
-        	*)
-                	rouge "Commande inconnue: $2"
-			jaune "Utilisation: "
-			usage_commande_pct $1
-        	        usage_commande_rezo $1
-                	usage_commande_nat $1
-			exit -1
-			;;
-		esac
-	fi
+function commande_startall {
+	jaune "TODO: stop all configured CTS..."
 }
 
-function test_commande {
+function commande_stopall {
+	jaune "TODO: stop all configured CTS..."
+}
+
+#--------------------------------------
+# commande_ctid_*
+#--------------------------------------
+
+function commande_ctid_enter {
+	commande "pct enter $1"
+}
+
+function commande_ctid_start {
+	commande "pct start $1"
+}
+
+function commande_ctid_stop {
+	commande "pct stop $1"
+}
+
+function commande_ctid_backup {
+	jaune "TODO: backup CT $1"
+}
+
+function commande_ctid_destroy {
+	jaune "TODO: destroy CT $1"
+}
+
+#--------------------------------------
+# parse_*
+#--------------------------------------
+
+function parse_commande_ctid {
 
 	case $2 in
-	"start"|"stop"|"enter")
-		commande_pct $1 $2
-		;;
-	"rezo")
-		commande_rezo $1 $2 $3
-		;;
-	"nat")
-		commande_nat $1 $2 $3
-		;;
-	*)
-		rouge "Commande inconnue: $2"
-		exit -1
-		;;
-	esac
-}
-
-function script_enable {
-	FOLDER_SCRIPT="${SCRIPTS_PATH}"
-	FOLDER_AVAILABLE="$3/$2-available"
-	FOLDER_ENABLED="$3/$2-enabled"
-	FOLDER_SCRIPTNAME="$4"
-	if [[ ! -d ${FOLDER_ENABLED} ]]
-	then
-		commande "mkdir ${FOLDER_ENABLED}"
-	fi
-	command_script_enable ${FOLDER_SCRIPT} ${FOLDER_AVAILABLE} ${FOLDER_ENABLED} ${FOLDER_SCRIPTNAME}
-}
-
-function script_disable {
-        FOLDER_SCRIPT="${SCRIPTS_PATH}"
-        FOLDER_AVAILABLE="$3/$2-available"
-        FOLDER_ENABLED="$3/$2-enabled"
-        FOLDER_SCRIPTNAME="$4"
-
-        command_script_disable ${FOLDER_SCRIPT} ${FOLDER_AVAILABLE} ${FOLDER_ENABLED} ${FOLDER_SCRIPTNAME}
-}
-
-function script_edit {
-	echo "TODO: edit script $2 for CT$1"
-}
-
-
-function commande_pct {
-
-	case $2 in
-	"start")
-		commande "pct start $1"
-		;;
-	"stop")
-		commande "pct stop $1"
-		;;
 	"enter")
-		commande "pct enter $1"
-		;;
+		commande_ctid_enter $1
+  	;;
+	"start")
+		commande_ctid_start $1
+  	;;
+	"stop")
+		commande_ctid_stop $1
+  	;;
+	"backup")
+		commande_ctid_backup $1
+  	;;
+	"destroy")
+		commande_ctid_destroy $1
+  	;;
 	*)
-		rouge "Commande pct inconnue: $2"
-		exit -1
+		if [[ ! -z $2 ]]
+		then
+			rouge "Commande inconnue: $2"
+		fi
+  	usage
 		;;
 	esac
 }
 
-function commande_rezo {
-        case $3 in
-        "enable")
-		script_enable $1 $2 "rezo.d" "net$1"
+function parse_commande {
+	case $1 in
+	"show")
+		commande_show
 		;;
-	"disable")
-		script_disable $1 $2 "rezo.d" "net$1"
+	"startall")
+		commande_startall
 		;;
-	"edit")
-                script_edit $1 $2 "rezo.d" "net$1"
-        	;;
-	*)
-		if [[ ! -z $3 ]]
-		then
-                	rouge "Commande $2 inconnue: $3"
-		fi
-		jaune "Utilisation:"
-		usage_commande_rezo $1
-                exit -1
-		;;
-        esac
-}
-
-function commande_nat {
-	case $3 in
-	"enable")
-		script_enable $1 $2 "nat.d" "vm$1"
-		;;
-	"disable")
-		script_disable $1 $2 "nat.d" "vm$1"
-		;;
-	"edit")
-		script_edit $1 $2 "nat.d" "vm$1"
+	"stopall")
+		commande_stopall
 		;;
 	*)
-		if [[ ! -z $3 ]]
-		then
-			rouge "Commande $2 inconnue: $3"
-		fi
-		jaune "Utilisation:"
-		usage_commande_nat $1
-		exit -1
+		parse_commande_ctid $1 $2
 		;;
 	esac
 }
 
+#--------------------------------------
+# MAIN !
+#--------------------------------------
 
-
-
-testusage $1
-
-#testct $1
-
-testusage_commande $1 $2 $3
-
-test_commande $1 $2 $3
-
-
-
-
-
+parse_commande $1 $2

@@ -1,8 +1,0 @@
-#!/bin/bash
-
-. ./functions
-
-export DEFAULT_FOLDER="backup"
-export DEFAULT_PATH="/root/scripts/backup.d"
-
-./scripten "backup-$1"

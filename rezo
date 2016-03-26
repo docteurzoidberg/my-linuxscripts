@@ -1,80 +1,201 @@
 #!/bin/bash
+SCRIPTS_PATH="/root/my-proxmox-scripts"
+FOLDER_ENABLED="rezo.d/rezo-enabled"
+FOLDER_AVAILABLE="rezo.d/rezo-available"
+SCRIPT_PREFIX="net"
+VERSION='1.1'
+#--------------------------------------
 
-
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-
-
-SCRIPTS_PATH='/root/scripts/rezo.d'
-SCRIPTS_ENABLED='rezo-enabled'
-VERSION=1.0
+cd $SCRIPTS_PATH
 
 . ./config
 . ./functions
 
+encadre "rezo script v$VERSION"
+
+#--------------------------------------
+# usage
+#--------------------------------------
+
+function usage {
+
+	jaune "Utilisation: "
+
+	echo -e "./rezo {ID} enable \t ${CYAN}Active le script rezo {ID}${NORMAL}"
+	echo -e "./rezo {ID} disable \t ${CYAN}Désactive le script rezo {ID}${NORMAL}"
+	echo -e "./rezo {ID} edit \t ${CYAN}Edite le script rezo {ID}${NORMAL}"
+	echo -e "./rezo {ID} show \t ${CYAN}Affiche le script rezo {ID}${NORMAL}"
+
+	echo -e "./rezo apply \t\t ${CYAN}Lance les scripts rezo${NORMAL}"
+	echo -e "./rezo show \t\t ${CYAN}Affiche les tables iptables en cours${NORMAL}"
+  echo -e "./rezo reset \t\t ${CYAN}Affiche les tables iptables en cours${NORMAL}"
+	echo -e "./rezo scripts \t\t ${CYAN}Affiche les scripts nats actifs${NORMAL}"
+}
+
+#--------------------------------------
+# internal_*
+#--------------------------------------
+
+function internal_flushforward {
+  echo
+  jaune "Préparation des tables et regles par defaut..."
+  echo
+
+  #nettoi
+  fn_commande "iptables -F FORWARD"
+
+    # trafic routé bloqué par défaut
+  #commande "iptables -P FORWARD DROP"
+
+  # trafic routé vers internet autorisé
+  #commande "iptables -A FORWARD ! -i vmbr0 -o vmbr0 -j ACCEPT"
+
+  # trafic retour d'internet routé autorisé
+  #commande "iptables -A FORWARD -i vmbr0 ! -o vmbr0 -m state --state ESTABLISHED,RELATED -j ACCEPT"
+
+  #NAT
+}
+
+function internal_flushnat {
+  echo -e
+  jaune "Flush des tables de NAT..."
+  echo -e
+
+  fn_commande "iptables -t nat -F"
+  fn_commande "iptables -t nat -X"
+  fn_commande "iptables -t nat -Z"
+  fn_commande "iptables -t nat -F POSTROUTING"
+}
+
+function internal_runscripts {
+  echo -e
+  jaune "Lancement des scripts..."
+  echo -e
+  for netscript in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
+          rouge "-> ${netscript}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+          chmod +x ${netscript}
+          fn_commande "${netscript}"
+  done;
+}
+
+function internal_runnatscript {
+  echo -e
+  jaune "Lancement du scripts NAT..."
+  echo -e
+
+  fn_commande "./nat apply"
+}
+
+#--------------------------------------
+# commande_*
+#--------------------------------------
 
 
-encadre "REZO SCRIPT V$VERSION"
+function commande_apply {
+  internal_flushforward
+  internal_flushnat
+  internal_runscripts
+  internal_runnatscript
+}
 
-jaune "Réseaux actifs: "
+function commande_show {
+  echo
+  jaune "TODO: show tables iptables "
+  echo
+}
 
-for site in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
-        rouge "(*) ${site}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
-done;
+function commande_reset {
+  echo
+  jaune "TODO: flush toutes tables iptables"
+  echo
+}
 
+function commande_scripts {
+  echo
+  jaune "Réseaux actifs: "
+  echo
+  for netscript in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
+          rouge "(*) ${netscript}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+  done;
+}
 
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
+#--------------------------------------
+# commande_scriptname_*
+#--------------------------------------
 
+function commande_scriptname_enable {
+    if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
+    then
+      commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
+    fi
+    fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
 
-jaune "Préparation des tables et regles par defaut..."
+function commande_scriptname_disable {
+  	fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
 
+function commande_scriptname_edit {
+  	echo "todo: edit $1"
+}
 
-#nettoi
-commande "iptables -F FORWARD"
+function commande_scriptname_show {
+  	echo "todo: show $1"
+}
 
-# trafic routé bloqué par défaut
-#commande "iptables -P FORWARD DROP"
+#--------------------------------------
+# parse_*
+#--------------------------------------
 
-# trafic routé vers internet autorisé
-#commande "iptables -A FORWARD ! -i vmbr0 -o vmbr0 -j ACCEPT"
+function parse_commande_scriptname {
 
-# trafic retour d'internet routé autorisé
-#commande "iptables -A FORWARD -i vmbr0 ! -o vmbr0 -m state --state ESTABLISHED,RELATED -j ACCEPT"
+	case $2 in
+	"enable")
+    commande_scriptname_enable $1
+  	;;
+	"disable")
+    commande_scriptname_disable $1
+    ;;
+  "show")
+    commande_scriptname_show $1
+    ;;
+  "edit")
+    commande_scriptname_edit $1
+    ;;
+	*)
+  	if [[ ! -z $2 ]]
+  	then
+			rouge "Commande inconnue: $2"
+  	fi
+		usage
+		;;
+	esac
+}
 
+function parse_commande {
 
+  case $1 in
+  "apply")
+    commande_apply
+  	;;
+  "show")
+    commande_show
+  	;;
+  "reset")
+  	commande_reset
+  	;;
+  "scripts")
+    commande_scripts
+  	;;
+  *)
+    parse_commande_scriptname $1 $2 $3
+  	;;
+  esac
 
-#NAT
-jaune "Flush des tables de NAT..."
+}
 
-commande "iptables -t nat -F"
-commande "iptables -t nat -X"
-commande "iptables -t nat -Z"
+#--------------------------------------
+# MAIN !
+#--------------------------------------
 
-commande "iptables -t nat -F POSTROUTING"
-
-jaune "Lancement des scripts..."
-
-for site in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
-        rouge "-> ${site}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
-        chmod +x ${site}
-        commande "${site}"
-done;
-
-
-
-
-
-# trafic entre eth1 et eth2 autorisé
-#iptables -A FORWARD -i eth2 -o eth1 -j ACCEPT
-#iptables -A FORWARD -i eth1 -o eth2 -j ACCEPT
-
-#iptables -t nat -F POSTROUTING
-
-
-./nat
-
-
-#commande "iptables -t nat -A POSTROUTING -o vmbr0 -j MASQUERADE"
+parse_commande $1 $2

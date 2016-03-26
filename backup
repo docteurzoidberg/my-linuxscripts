@@ -1,43 +1,133 @@
 #!/bin/bash
+SCRIPTS_PATH="/root/my-proxmox-scripts"
+FOLDER_ENABLED="backup.d/backup-enabled"
+FOLDER_AVAILABLE="backup.d/backup-available"
+SCRIPT_PREFIX="backup-"
+VERSION='0.1'
+#--------------------------------------
 
-# TODO !
-# pour chaque script dans backup-enabled/ lancer le script
-
-
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-
-
-ROOT_PATH='/root/scripts'
-SCRIPTS_PATH='/root/scripts/backup.d'
-SCRIPTS_ENABLED='backup-enabled'
-VERSION=0.1
-
-cd $ROOT_PATH
+cd $SCRIPTS_PATH
 
 . ./config
 . ./functions
 
-encadre "BACKUPS SCRIPT V$VERSION"
+encadre "backups script v$VERSION"
 
-jaune "Scripts actifs: "
+#--------------------------------------
+# usage
+#--------------------------------------
 
-for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
-        rouge "(*) ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
-done;
+function usage {
+  echo -e
+	jaune "Utilisation: "
+  echo -e
 
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
+	echo -e "./backup {ID} enable \t ${CYAN}Active le script backup {ID}${NORMAL}"
+	echo -e "./backup {ID} disable \t ${CYAN}Désactive le script backup {ID}${NORMAL}"
+	echo -e "./backup {ID} edit \t ${CYAN}Edite le script backup {ID}${NORMAL}"
+	echo -e "./backup {ID} show \t ${CYAN}Affiche le script backup {ID}${NORMAL}"
 
-jaune "Lancement des scripts..."
+	echo -e "./backup run \t\t ${CYAN}Lance les scripts backup${NORMAL}"
+	echo -e "./backup scripts \t\t ${CYAN}Affiche les scripts nats actifs${NORMAL}"
+}
 
-for script in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
-        rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
-        chmod +x ${script}
-        commande "${script}"
-done;
+#--------------------------------------
+# commande_*
+#--------------------------------------
 
+function commande_run {
+  echo
+  jaune "Lancement des scripts..."
+  echo
 
+  for script in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
+    rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+    chmod +x ${script}
+    commande "${script}"
+  done;
+}
 
+function commande_show {
+  echo -e
+  jaune "Scripts actifs: "
+  echo -e
+
+  for script in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
+    rouge "(*) ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+  done;
+}
+
+#--------------------------------------
+# commande_scriptname_*
+#--------------------------------------
+
+function commande_scriptname_enable {
+    if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
+    then
+      commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
+    fi
+    fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
+
+function commande_scriptname_disable {
+  	fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
+
+function commande_scriptname_edit {
+  	echo "todo: edit $1"
+}
+
+function commande_scriptname_show {
+  	echo "todo: show $1"
+}
+
+#--------------------------------------
+# parse_*
+#--------------------------------------
+
+function parse_commande_scriptname {
+
+	case $2 in
+	"enable")
+    commande_scriptname_enable $1
+  	;;
+	"disable")
+    commande_scriptname_disable $1
+    ;;
+  "show")
+    commande_scriptname_show $1
+    ;;
+  "edit")
+    commande_scriptname_edit $1
+    ;;
+	*)
+  	if [[ ! -z $2 ]]
+  	then
+			rouge "Commande inconnue: $2"
+  	fi
+		usage
+		;;
+	esac
+}
+
+function parse_commande {
+
+  case $1 in
+  "run")
+    commande_run
+  	;;
+  "show")
+    commande_show
+  	;;
+  *)
+    parse_commande_scriptname $1 $2 $3
+  	;;
+  esac
+
+}
+
+#--------------------------------------
+# MAIN !
+#--------------------------------------
+
+parse_commande $1 $2

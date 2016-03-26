@@ -1,36 +1,48 @@
 #!/bin/bash
+SCRIPTS_PATH="/root/my-proxmox-scripts"
+FOLDER_ENABLED="nat.d/nat-enabled"
+FOLDER_AVAILABLE="nat.d/nat-available"
+SCRIPT_PREFIX="vm"
+VERSION='1.1'
+#--------------------------------------
 
+cd $SCRIPTS_PATH
 
 . ./config
 . ./functions
 
-
-#--------------------------------------
-SCRIPTS_PATH='/root/scripts/nat.d'
-SCRIPTS_ENABLED='nat-enabled'
-VERSION='1.1'
-#--------------------------------------
-
-
-
-
-
 encadre "nat script v$VERSION"
 
-jaune "IP Nat: "
-rouge "${IP_NAT}"
-echo -e
+#--------------------------------------
+# usage
+#--------------------------------------
 
+function usage {
+
+	jaune "Utilisation: "
+
+	echo -e "./nat {ID} enable \t ${CYAN}Active le script nat {ID}${NORMAL}"
+	echo -e "./nat {ID} disable \t ${CYAN}Désactive le script nat {ID}${NORMAL}"
+	echo -e "./nat {ID} edit \t ${CYAN}Edite le script nat {ID}${NORMAL}"
+	echo -e "./nat {ID} show \t ${CYAN}Affiche le script nat {ID}${NORMAL}"
+	echo -e "./nat apply \t\t ${CYAN}Lance les scripts nat${NORMAL}"
+	echo -e "./nat show \t\t ${CYAN}Affiche la table nat iptables en cours${NORMAL}"
+	echo -e "./nat scripts \t\t ${CYAN}Affiche les scripts nats actifs${NORMAL}"
+}
+
+#--------------------------------------
+# internal_*
+#--------------------------------------
 
 #Ajoute une regle dans iptables (table nat)
-function addNat {
+function internal_add_nat {
    	cmdnat="iptables -t nat -A PREROUTING -p $2 -d $3 --dport $4 -i vmbr0 -j DNAT --to-destination $5:$6"
 	echo -e "${CYAN}$1 ($2)${NORMAL}: ${cmdnat}"
 	${cmdnat}
 }
 
 #Parse un fichier de config type nat.conf
-function parseNat {
+function internal_parse_nat {
 
 	# Epuration du ficheir de configuration
 	cat $1 | grep -v "^\s*#" | grep -v "^\s*$" |sed -e 's/^\s*//g' > /tmp/nat.$$.txt
@@ -46,7 +58,7 @@ function parseNat {
 
 	while IFS=:- read label mode ipout portout ipin portin
 	do
-		addNat $label $mode $ipout $portout $ipin $portin
+		internal_add_nat $label $mode $ipout $portout $ipin $portin
 	done < /tmp/nat.$$.out
 
 	rm /tmp/nat.$$.txt
@@ -54,79 +66,109 @@ function parseNat {
 
 }
 
-function usage_nat {
-	jaune "Utilisation: "
-	echo -e "./nat {ID} enable \t ${CYAN}Active le script nat {ID}${NORMAL}"
-	echo -e "./nat {ID} disable \t ${CYAN}Désactive le script nat {ID}${NORMAL}"
-	echo -e "./nat {ID} edit \t ${CYAN}Edite le script nat {ID}${NORMAL}"
-	echo -e "./nat {ID} show \t ${CYAN}Affiche le script nat {ID}${NORMAL}"
-	echo -e "./nat apply \t\t ${CYAN}Lance les scripts nat${NORMAL}"
-	echo -e "./nat show \t\t ${CYAN}Affiche la table nat iptables en cours${NORMAL}"
-	echo -e "./nat scripts \t\t ${CYAN}Affiche les scripts nats actifs${NORMAL}"
-}
+#--------------------------------------
+# commande_*
+#--------------------------------------
 
-function run_nat_scripts {
-
+function commande_apply {
+  echo
+  jaune "Applique les règles nat: "
+  echo
 	#Pour chaque fichier de config dans nat.d
-	for site in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
-
-		if [ -f ${site} ]
+	for natscript in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
+		if [ -f ${natscript} ]
 		then
-			rouge "(*) ${site}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
-                	parseNat "${site}"
+			rouge "(*) ${natscript}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+    	internal_parse_nat "${natscript}"
 		fi
-
 	done;
-
 }
 
-function test_nat_arg {
+function commande_reset {
+  echo "TODO: commande reset"
+}
+
+function commande_show {
+  echo
+  jaune "Tables nat en cours: "
+  echo
+  commande "iptables -t nat -L"
+}
+
+#--------------------------------------
+# commande_scriptname_*
+#--------------------------------------
+
+function commande_scriptname_enable {
+    if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
+    then
+      commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
+    fi
+    fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
+
+function commande_scriptname_disable {
+  	fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
+
+function commande_scriptname_edit {
+  	echo "todo: edit $1"
+}
+
+function commande_scriptname_show {
+  	echo "todo: show $1"
+}
+
+#--------------------------------------
+# parse_*
+#--------------------------------------
+
+function parse_commande_scriptname {
 
 	case $2 in
 	"enable")
-        	echo "todo: enable"
-        	;;
+    commande_scriptname_enable $1
+  	;;
 	"disable")
-        	echo "todo: disable"
-        	;;
+    commande_scriptname_disable $1
+    ;;
+  "show")
+    commande_scriptname_show $1
+    ;;
+  "edit")
+    commande_scriptname_edit $1
+    ;;
 	*)
-        	if [[ ! -z $2 ]]
-        	then
+  	if [[ ! -z $2 ]]
+  	then
 			rouge "Commande inconnue: $2"
-        	fi
-		usage_nat
+  	fi
+		usage
 		;;
 	esac
 }
 
+function parse_commande {
 
+  case $1 in
+  "apply")
+    commande_apply
+  	;;
+  "reset")
+  	commande_reset
+  	;;
+  "show")
+    commande_show
+  	;;
+  *)
+    parse_commande_scriptname $1 $2 $3
+  	;;
+  esac
 
-case $1 in
-"apply")
-	jaune "Applique les règles nat: "
-	echo
-	run_nat_scripts
-	;;
-"reset")
-	echo "todo: reset"
-	;;
-"show")
-	echo
-	jaune "Table nat en cours: "
-	echo
+}
 
-	commande "iptables -t nat -L"
-	;;
-*)
-	if [[ -z $1 ]]
-	then
-		usage_nat
-		exit -1
-	fi
+#--------------------------------------
+# MAIN !
+#--------------------------------------
 
-	test_nat_arg $1 $2
-	;;
-esac
-
-
-echo ${MIKO}
+parse_commande $1 $2
