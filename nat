@@ -127,11 +127,11 @@ function commande_scriptname_disable {
 }
 
 function commande_scriptname_edit {
-  	echo "todo: edit $1"
+  	fn_command_script_edit $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
 }
 
 function commande_scriptname_show {
-  	echo "todo: show $1"
+  	fn_command_script_show $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
 }
 
 #--------------------------------------

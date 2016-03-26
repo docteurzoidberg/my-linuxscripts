@@ -98,6 +98,43 @@ function fn_usage_line {
   echo -e "${NORMAL}$1${CYAN}$2${NORMAL}"
 }
 
+function fn_command_script_edit {
+
+  ROOT_DIR=$1
+  AVAILABLE_DIR=$2
+  ENABLED_DIR=$3
+  SCRIPT_NAME=$4
+
+  TEST_AVAILABLE="${ROOT_DIR}/${AVAILABLE_DIR}/${SCRIPT_NAME}"
+
+  #Test available
+  if [[ ! -f "${TEST_AVAILABLE}" ]]
+  then
+          rouge "Le script ${TEST_AVAILABLE} n'éxiste pas !"
+          exit -1
+  fi
+
+  fn_commande "nano ${TEST_AVAILABLE}"
+}
+
+function fn_command_script_show {
+
+  ROOT_DIR=$1
+  AVAILABLE_DIR=$2
+  ENABLED_DIR=$3
+  SCRIPT_NAME=$4
+
+  TEST_AVAILABLE="${ROOT_DIR}/${AVAILABLE_DIR}/${SCRIPT_NAME}"
+
+  #Test available
+  if [[ ! -f "${TEST_AVAILABLE}" ]]
+  then
+          rouge "Le script ${TEST_AVAILABLE} n'éxiste pas !"
+          exit -1
+  fi
+
+  fn_commande "cat ${TEST_AVAILABLE}"
+}
 
 
 #Lien symbolique script $type-available/$script $type-enabled/script
