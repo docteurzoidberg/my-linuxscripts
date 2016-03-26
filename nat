@@ -150,6 +150,10 @@ function parse_commande_scriptname {
 
 	case $2 in
 	"enable")
+	  if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
+	  then
+	    fn_commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
+	  fi
     commande_scriptname_enable $1
   	;;
 	"disable")
