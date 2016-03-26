@@ -15,16 +15,6 @@ FIGLETCMD=figlet
 TOILETCMD=toilet
 COWSAYCMD=/usr/games/cowsay
 
-
-function fn_get_scripts_path {
-  local _result=`echo "$0" | sed -e "s/[^\/]*$//"`
-  if [[ $_result = "./" ]]
-  then
-   _result=`pwd`
-  fi
-  echo $_result
-}
-
 function print {
         echo -e "${ROSE}$1${NORMAL}"
 }
