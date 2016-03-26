@@ -1,0 +1,35 @@
+#!/bin/bash
+​
+SCRIPTS_PATH=/root/my-proxmox-scripts
+
+cd $SCRIPTS_PATH
+
+. ./config
+. ./functions
+
+function post_to_slack () {
+
+  # format message as a code block ```${msg}```
+  SLACK_MESSAGE="\`\`\`$1\`\`\`"
+  SLACK_URL="${SLACK_SERVICE_URL}"
+
+  case "$2" in
+    INFO)
+      SLACK_ICON=':slack:'
+      ;;
+    WARNING)
+      SLACK_ICON=':warning:'
+      ;;
+    ERROR)
+      SLACK_ICON=':bangbang:'
+      ;;
+    *)
+      SLACK_ICON=':slack:'
+      ;;
+  esac
+
+  curl -X POST --data "payload={\"text\": \"${SLACK_ICON} ${SLACK_MESSAGE}\"}" ${SLACK_URL}
+}
+​
+post_to_slack $1 $2
+
