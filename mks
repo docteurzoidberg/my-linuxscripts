@@ -1,0 +1,71 @@
+#!/bin/bash
+SCRIPTS_PATH="/root/my-proxmox-scripts"
+VERSION='0.1'
+#--------------------------------------
+
+cd $SCRIPTS_PATH
+
+. ./config
+. ./functions
+
+encadre "MikoScripts install / update script v$VERSION"
+
+#--------------------------------------
+# usage
+#--------------------------------------
+
+function usage {
+  echo -e
+	jaune "Utilisation: "
+  echo -e
+
+	echo -e "./mks update \t ${CYAN}Met a jour les scripts"
+}
+
+#--------------------------------------
+# commande_*
+#--------------------------------------
+
+function commande_update {
+  echo -e
+  jaune  "Mise à jour des scripts depuis github..."
+  echo -e
+
+  commande "git pull origin master"
+}
+
+#--------------------------------------
+# parse_*
+#--------------------------------------
+
+function parse_commande_scriptname {
+
+	case $2 in
+	*)
+  	if [[ ! -z $2 ]]
+  	then
+			rouge "Commande inconnue: $2"
+  	fi
+		usage
+		;;
+	esac
+}
+
+function parse_commande {
+
+  case $1 in
+  "update")
+    commande_update
+  	;;
+  *)
+    parse_commande_scriptname $1 $2 $3
+  	;;
+  esac
+
+}
+
+#--------------------------------------
+# MAIN !
+#--------------------------------------
+
+parse_commande $1 $2
