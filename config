@@ -1,13 +1,14 @@
 #!/bin/bash
 
 
-#Fichier de config pour definir des variables utilisées dans les scripts
+export IP_NAT='62.210.170.243'
 
+export IP_VPS1='212.129.35.183'
+export IP_VPS2='212.129.35.184'
+export IP_VPS3='212.129.35.185'
 
-#IP_NAT = ip publique de votre choix
-export IP_NAT='10.11.12.13'
-
-#EXEMPLE pour des ip failovers
-export IP_FAILOVER1='10.0.0.1'
-export IP_FAILOVER2='10.0.0.2'
-export IP_FAILOVER3='10.0.0.3'
+export IP_TPPT=${IP_VPS2}
+export IP_DTC=${IP_VPS3}
+export IP_TUPEUXPASTEST=${IP_TPPT}
+export IP_DANSTONCUBE=${IP_DTC}
+export IP_FAILOVER=${IP_VPS1}
