@@ -47,7 +47,10 @@ function commande_scripts {
 	jaune "Scripts actifs: "
 
 	for script in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
-        	rouge "(*) ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+		if [[ -f ${script} ]]
+		then
+        		rouge "(*) ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+		fi
 	done;
 }
 
@@ -80,7 +83,7 @@ function commande_stop {
 function commande_scriptname_enable {
     if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
     then
-      commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
+      fn_commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
     fi
     fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
 }

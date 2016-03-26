@@ -75,7 +75,7 @@ function commande_scripts {
 function commande_scriptname_enable {
     if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
     then
-      commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
+      fn_commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
     fi
     fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
 }
