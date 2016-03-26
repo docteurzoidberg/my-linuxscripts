@@ -8,22 +8,22 @@
 #--------------------------------------
 SCRIPTS_PATH='/root/scripts/nat.d'
 SCRIPTS_ENABLED='nat-enabled'
-VERSION='1.0'
+VERSION='1.1'
 #--------------------------------------
+
+
+
 
 
 encadre "nat script v$VERSION"
 
-echo
-
-echo "IP NAT => ${IP_NAT}"
-
-
+jaune "IP Nat: "
+rouge "${IP_NAT}"
+echo -e
 
 
 #Ajoute une regle dans iptables (table nat)
 function addNat {
-	
    	cmdnat="iptables -t nat -A PREROUTING -p $2 -d $3 --dport $4 -i vmbr0 -j DNAT --to-destination $5:$6"
 	echo -e "${CYAN}$1 ($2)${NORMAL}: ${cmdnat}"
 	${cmdnat}
@@ -54,19 +54,79 @@ function parseNat {
 
 }
 
+function usage_nat {
+	jaune "Utilisation: "
+	echo -e "./nat {ID} enable \t ${CYAN}Active le script nat {ID}${NORMAL}"
+	echo -e "./nat {ID} disable \t ${CYAN}Désactive le script nat {ID}${NORMAL}"
+	echo -e "./nat {ID} edit \t ${CYAN}Edite le script nat {ID}${NORMAL}"
+	echo -e "./nat {ID} show \t ${CYAN}Affiche le script nat {ID}${NORMAL}"
+	echo -e "./nat apply \t\t ${CYAN}Lance les scripts nat${NORMAL}"
+	echo -e "./nat show \t\t ${CYAN}Affiche la table nat iptables en cours${NORMAL}"
+	echo -e "./nat scripts \t\t ${CYAN}Affiche les scripts nats actifs${NORMAL}"
+}
 
-#Pour chaque fichier de config dans nat.d
-for site in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
+function run_nat_scripts {
 
-	if [ -f ${site} ]
+	#Pour chaque fichier de config dans nat.d
+	for site in ${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/*; do
+
+		if [ -f ${site} ]
+		then
+			rouge "(*) ${site}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
+                	parseNat "${site}"
+		fi
+
+	done;
+
+}
+
+function test_nat_arg {
+
+	case $2 in
+	"enable")
+        	echo "todo: enable"
+        	;;
+	"disable")
+        	echo "todo: disable"
+        	;;
+	*)
+        	if [[ ! -z $2 ]]
+        	then
+			rouge "Commande inconnue: $2"
+        	fi
+		usage_nat
+		;;
+	esac
+}
+
+
+
+case $1 in
+"apply")
+	jaune "Applique les règles nat: "
+	echo
+	run_nat_scripts
+	;;
+"reset")
+	echo "todo: reset"
+	;;
+"show")
+	echo
+	jaune "Table nat en cours: "
+	echo
+
+	commande "iptables -t nat -L"
+	;;
+*)
+	if [[ -z $1 ]]
 	then
-		rouge "(*) ${site}" | sed -e "s,${SCRIPTS_PATH}/${SCRIPTS_ENABLED}/,,g"
-                parseNat "${site}"
+		usage_nat
+		exit -1
 	fi
 
-done;
-
-
+	test_nat_arg $1 $2
+	;;
+esac
 
 
 echo ${MIKO}
