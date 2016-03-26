@@ -1,8 +1,16 @@
 #!/bin/bash
-SCRIPTS_PATH="/root/my-proxmox-scripts"
 VERSION='0.1'
 #--------------------------------------
 
+function _get_scripts_path {
+  local _result=`echo "$0" | sed -e "s/[^\/]*$//"`
+  if [[ $_result = "./" ]]
+  then
+   _result=`pwd`
+  fi
+  echo $_result
+}
+SCRIPTS_PATH=$(_get_scripts_path)
 cd $SCRIPTS_PATH
 
 . ./config
