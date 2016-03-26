@@ -92,7 +92,22 @@ function commande_show {
   echo
   jaune "Tables nat en cours: "
   echo
-  commande "iptables -t nat -L"
+  fn_commande "iptables -t nat -L"
+}
+
+function commande_scripts {
+	echo -e
+	jaune "Règles nat actives: "
+	echo -e
+
+	#Pour chaque fichier de config dans nat.d
+        for natscript in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
+                if [ -f ${natscript} ]
+                then
+                        rouge "(*) ${natscript}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+	        fi
+	done;
+
 }
 
 #--------------------------------------
@@ -108,7 +123,7 @@ function commande_scriptname_enable {
 }
 
 function commande_scriptname_disable {
-  	fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+	fn_command_script_disable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
 }
 
 function commande_scriptname_edit {
@@ -160,6 +175,9 @@ function parse_commande {
   "show")
     commande_show
   	;;
+  "scripts")
+    commande_scripts
+	;;
   *)
     parse_commande_scriptname $1 $2 $3
   	;;

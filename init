@@ -23,8 +23,8 @@ function usage {
 
 	echo -e "init {scriptname} enable \t ${CYAN}Active le script {scriptname}${NORMAL}"
 	echo -e "init {scriptname} disable \t ${CYAN}Désactive le script {scriptname}${NORMAL}"
-	echo -e "init {scriptname} show \t ${CYAN}Affiche le script {scriptname}${NORMAL}"
-	echo -e "init {scriptname} edit \t ${CYAN}Edite le script {scriptname}${NORMAL}"
+	echo -e "init {scriptname} show \t\t ${CYAN}Affiche le script {scriptname}${NORMAL}"
+	echo -e "init {scriptname} edit \t\t ${CYAN}Edite le script {scriptname}${NORMAL}"
 	echo -e "init start \t\t\t ${CYAN}Lance les scripts actifs avec la paramètre start${NORMAL}"
 	echo -e "init stop \t\t\t ${CYAN}Lance les scripts actifs avec le paramètre stop${NORMAL}"
 	echo -e "init scripts \t\t\t ${CYAN}Affiche les scripts actifs${NORMAL}"

@@ -28,7 +28,7 @@ function usage {
 	echo -e "./backup {ID} show \t ${CYAN}Affiche le script backup {ID}${NORMAL}"
 
 	echo -e "./backup run \t\t ${CYAN}Lance les scripts backup${NORMAL}"
-	echo -e "./backup scripts \t\t ${CYAN}Affiche les scripts nats actifs${NORMAL}"
+	echo -e "./backup scripts \t ${CYAN}Affiche les scripts nats actifs${NORMAL}"
 }
 
 #--------------------------------------

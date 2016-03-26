@@ -132,7 +132,7 @@ function fn_command_script_enable {
         echo -e "Création du lien symbolique ${CYAN}${TEST_ENABLED}${NORMAL} vers ${CYAN}${TEST_AVAILABLE}${NORMAL}"
         #TODO
 
-        commande "ln -sf ${TEST_AVAILABLE} ${TEST_ENABLED}"
+        fn_commande "ln -sf ${TEST_AVAILABLE} ${TEST_ENABLED}"
         if [[ $? -eq 0 ]]
         then
                 vert "Script ${SCRIPT_NAME} activé :-)"
@@ -172,7 +172,7 @@ function fn_command_script_disable {
 
 	echo -e "Suppression lien symbolique ${CYAN}${TEST_ENABLED}${NORMAL}"
 
-	commande "rm ${TEST_ENABLED}"
+	fn_commande "rm ${TEST_ENABLED}"
 	if [[ $? -eq 0 ]]
 	then
 		vert "Script ${SCRIPT_NAME} désactivé :-)"
