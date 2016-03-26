@@ -58,7 +58,7 @@ function commande_start {
 	for script in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
   	rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
   	chmod +x ${script}
-  	commande "${script} start"
+  	fn_commande "${script} start"
 	done;
 }
 
@@ -69,7 +69,7 @@ function commande_stop {
 	for script in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
     rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
     chmod +x ${script}
-    commande "${script} stop"
+    fn_commande "${script} stop"
   done;
 }
 
@@ -111,7 +111,7 @@ function parse_commande_scriptname {
 		commande_scriptname_disable $1
   	;;
 	"show")
-		commande_scriptname_edit $1
+		commande_scriptname_show $1
   	;;
 	"edit")
 		commande_scriptname_edit $1

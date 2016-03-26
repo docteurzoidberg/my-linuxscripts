@@ -1,5 +1,4 @@
 #!/bin/bash
-SCRIPTS_PATH="/root/my-proxmox-scripts"
 FOLDER_ENABLED="backup.d/backup-enabled"
 FOLDER_AVAILABLE="backup.d/backup-available"
 SCRIPT_PREFIX="backup-"
@@ -37,7 +36,7 @@ function usage {
 	echo -e "./backup {ID} show \t ${CYAN}Affiche le script backup {ID}${NORMAL}"
 
 	echo -e "./backup run \t\t ${CYAN}Lance les scripts backup${NORMAL}"
-	echo -e "./backup scripts \t ${CYAN}Affiche les scripts nats actifs${NORMAL}"
+	echo -e "./backup scripts \t ${CYAN}Affiche les scripts backups actifs${NORMAL}"
 }
 
 #--------------------------------------
@@ -52,17 +51,20 @@ function commande_run {
   for script in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
     rouge "-> ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
     chmod +x ${script}
-    commande "${script}"
+    fn_commande "${script}"
   done;
 }
 
-function commande_show {
+function commande_scripts {
   echo -e
   jaune "Scripts actifs: "
   echo -e
 
   for script in ${SCRIPTS_PATH}/${FOLDER_ENABLED}/*; do
-    rouge "(*) ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+    if [[ -f ${script} ]]
+    then
+        rouge "(*) ${script}" | sed -e "s,${SCRIPTS_PATH}/${FOLDER_ENABLED}/,,g"
+    fi
   done;
 }
 
@@ -79,15 +81,15 @@ function commande_scriptname_enable {
 }
 
 function commande_scriptname_disable {
-  	fn_command_script_enable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+  	fn_command_script_disable $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
 }
 
 function commande_scriptname_edit {
-  	echo "todo: edit $1"
+        fn_command_script_edit $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
 }
 
 function commande_scriptname_show {
-  	echo "todo: show $1"
+        fn_command_script_show $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
 }
 
 #--------------------------------------
@@ -98,6 +100,10 @@ function parse_commande_scriptname {
 
 	case $2 in
 	"enable")
+	if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
+	then
+		fn_commande "mkdir $SCRIPTS_PATH/$FOLDER_ENABLED"
+	fi
     commande_scriptname_enable $1
   	;;
 	"disable")
@@ -125,9 +131,9 @@ function parse_commande {
   "run")
     commande_run
   	;;
-  "show")
-    commande_show
-  	;;
+  "scripts")
+    commande_scripts
+    ;;
   *)
     parse_commande_scriptname $1 $2 $3
   	;;

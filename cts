@@ -73,15 +73,15 @@ function commande_stopall {
 #--------------------------------------
 
 function commande_ctid_enter {
-	commande "pct enter $1"
+	fn_commande "pct enter $1"
 }
 
 function commande_ctid_start {
-	commande "pct start $1"
+	fn_commande "pct start $1"
 }
 
 function commande_ctid_stop {
-	commande "pct stop $1"
+	fn_commande "pct stop $1"
 }
 
 function commande_ctid_backup {
