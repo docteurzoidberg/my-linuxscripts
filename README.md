@@ -18,51 +18,77 @@ Des scripts pratiques (ou pas) pour gérer, entre autres, l'activation / désact
 
 # Liste des scripts
 
-- ./rezo
-- ./nat
-- ./init
-- ./backup
-- ./cts
-- ./mks
+- rezo
+- nat
+- init
+- backup
+- cts
+- mks
 
 ## ./rezo
 
 ### Utilisation script rezo:
 
-	./rezo {ID} enable       Active le script rezo {ID}
+	rezo {ID} enable       Active le script rezo {ID}
+	rezo {ID} disable      Désactive le script rezo {ID}
+	rezo {ID} edit         Edite le script rezo {ID}
+	rezo {ID} show         Affiche le script rezo {ID}
 
-	./rezo {ID} disable      Désactive le script rezo {ID}
-	./rezo {ID} edit         Edite le script rezo {ID}
-	./rezo {ID} show         Affiche le script rezo {ID}
-
-	./rezo apply             Lance les scripts rezo
-	./rezo show              Affiche les tables iptables en cours
-	./rezo reset             Reset les tables iptables en cours
-	./rezo scripts           Affiche les scripts nats actifs
+	rezo apply             Lance les scripts rezo
+	rezo show              Affiche les tables iptables en cours
+	rezo reset             Reset les tables iptables en cours
+	rezo scripts           Affiche les scripts nats actifs
 
 ## ./nat
 
 ### Utilisation script nat:
 
-	./nat {ID} enable        Active le script nat {ID}
-	./nat {ID} disable       Désactive le script nat {ID}
-	./nat {ID} edit          Edite le script nat {ID}
-	./nat {ID} show          Affiche le script nat {ID}
+	nat {ID} enable        Active le script nat {ID}
+	nat {ID} disable       Désactive le script nat {ID}
+	nat {ID} show          Affiche le script nat {ID}
+	nat {ID} edit          Edite le script nat {ID}
 
-	./nat apply              Lance les scripts nat actifs
-	./nat show               Affiche la table nat iptables en cours
-	./nat scripts            Affiche les scripts nats actifs
+	nat apply              Lance les scripts nat actifs
+	nat show               Affiche la table nat iptables en cours
+	nat scripts            Affiche les scripts nats actifs
 
 ## ./init
-todo
+
+### Utilisation script init:
+
+	init {scriptname} start          Lance le script {scriptname} start
+	init {scriptname} stop           Lance le script {scriptname} stop
+	init {scriptname} enable         Active le script {scriptname}
+	init {scriptname} disable        Désactive le script {scriptname}
+	init {scriptname} show           Affiche le script {scriptname}
+	init {scriptname} edit           Edite le script {scriptname}
+
+	init install                     Installe le script /etc/init.d/my-proxmox-scripts
+	init uninstall                   Désinstalle le script /etc/init.d/my-proxmox-scripts
+	init start                       Lance les scripts actifs avec la paramètre start
+	init stop                        Lance les scripts actifs avec le paramètre stop
+	init scripts                     Affiche les scripts actifs
 
 ## ./backup
-todo
+
+### Utilisation script backup:
+
+	backup {ID} enable     Active le script backup {ID}
+	backup {ID} disable    Désactive le script backup {ID}
+	backup {ID} edit       Edite le script backup {ID}
+	backup {ID} show       Affiche le script backup {ID}
+
+	backup run             Lance les scripts backup
+	backup scripts         Affiche les scripts backups actifs
 
 ## ./cts
+
+### Utilisation script cts:
 todo
 
 ## ./mks
+
+### Utilisation script mks:
 todo
 
 ---

@@ -27,11 +27,12 @@ Ceux si sont créés automatiquement lors de l'utilisation de rezen, initen, bac
 	mkdir /root/scripts/init.d/init-enabled
 	mkdir /root/scripts/backup.d/backup-enabled
 
-## 3) Configurer le script d'init
+## 3) Installer le script d'init pour le systeme
 
-	cd /etc/init.d
-	ln -s /root/scripts/init rootscripts-init
-	update-rc.d rootscripts-init defaults
+	cd /root/scripts
+	./init install
+
+(./init uninstall pour enlever le script du démarrage)
 
 ## 4) Activer le script sample et rezo à l'init
 
@@ -53,7 +54,6 @@ Activation du fichier net100
 	cd /root/scripts
 	./rezo 100 enable
 
-
 ### fichier nat (exemple pour ct 100)
 
   cd /root/scripts/nat.d/nat-available
@@ -70,7 +70,6 @@ Activation du fichier vm100
 
 	cd /root/scripts
 	./rezo apply
-
 
 ## 7) Rebooter pour verifier
 
