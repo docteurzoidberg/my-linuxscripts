@@ -3,16 +3,16 @@
 Des scripts pratiques (ou pas) pour gérer, entre autres, l'activation / désactivation de régles NAT / réseau iptables pour des conteneurs, ou des machines virtuelles, sur une serveur hote type proxmox (ou autre).
 
 # Architecture des dossiers / fichiers (vue simplifiée)
-.
-├── config													//Fichier de configuration, les variables définies dedans sont accessibles par les scripts
-├── functions												//Fichier contenant des fonctions pour les scripts
-├── docs														//De la doc !
-├── <nomduscript>										//Scripts= [ init | backup | cts | rezo | nat ]
-├── <nomduscript>.d
-│   ├── <nomduscript>-available			//Dossier contenant les scripts de <nomduscript> disponibles
-│   │   └── <nomduscript>-sample		//Fichier exemple pour les scripts de <nomduscript>
-│   └──  backup-enabled
-└── utils														//Contient divers scripts / configurations facultatifs
+	.
+	├── config													//Fichier de configuration, les variables définies dedans sont accessibles par les scripts
+	├── functions												//Fichier contenant des fonctions pour les scripts
+	├── docs														//De la doc !
+	├── <nomduscript>										//Scripts= [ init | backup | cts | rezo | nat ]
+	├── <nomduscript>.d
+	│   ├── <nomduscript>-available			//Dossier contenant les scripts de <nomduscript> disponibles
+	│   │   └── <nomduscript>-sample		//Fichier exemple pour les scripts de <nomduscript>
+	│   └──  backup-enabled
+	└── utils														//Contient divers scripts / configurations facultatifs
 
 + Des fichiers README.md sont dispos un peu partout dans les dossiers pour expliquer chaque usage
 
