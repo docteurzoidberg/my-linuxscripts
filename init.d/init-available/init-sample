@@ -1,10 +1,22 @@
 #!/bin/bash
 
-#mikoscripts init sample
 #fout la date a la suite du fichier /root/logs/init-sample.log
 
 DATE=$(date)
 LOGFILE="/root/logs/init-sample.log"
 
-cd /root/scripts/
-echo "Le systeme à booté à ${DATE}" >> ${LOGFILE}
+
+case $1 in
+"start")
+	echo "Démarrage à ${DATE}" >> ${LOGFILE}
+	;;
+"stop")
+	echo "Arrêt à ${DATE}" >> ${LOGFILE}
+	;;
+*)
+	echo "Lancement sans argument à ${DATE}" >> ${LOGFILE}
+	;;
+esac
+
+
+
