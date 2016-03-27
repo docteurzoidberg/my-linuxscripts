@@ -29,10 +29,13 @@ function usage {
 
 	jaune "Utilisation: "
 
+	echo -e "init {scriptname} start \t ${CYAN}Lance le script {scriptname} start${NORMAL}"
+	echo -e "init {scriptname} stop \t ${CYAN}Lance le script {scriptname} stop${NORMAL}"
 	echo -e "init {scriptname} enable \t ${CYAN}Active le script {scriptname}${NORMAL}"
 	echo -e "init {scriptname} disable \t ${CYAN}Désactive le script {scriptname}${NORMAL}"
 	echo -e "init {scriptname} show \t\t ${CYAN}Affiche le script {scriptname}${NORMAL}"
 	echo -e "init {scriptname} edit \t\t ${CYAN}Edite le script {scriptname}${NORMAL}"
+	echo -e
 	echo -e "init start \t\t\t ${CYAN}Lance les scripts actifs avec la paramètre start${NORMAL}"
 	echo -e "init stop \t\t\t ${CYAN}Lance les scripts actifs avec le paramètre stop${NORMAL}"
 	echo -e "init scripts \t\t\t ${CYAN}Affiche les scripts actifs${NORMAL}"
@@ -80,6 +83,14 @@ function commande_stop {
 # commande_scriptname_*
 #--------------------------------------
 
+function commande_scriptname_start {
+	fn_command_script_start $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
+
+function commande_scriptname_stop {
+        fn_command_script_stop $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
+
 function commande_scriptname_enable {
     if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
     then
@@ -107,6 +118,12 @@ function commande_scriptname_show {
 function parse_commande_scriptname {
 
 	case $2 in
+	"start")
+		commande_scriptname_start $1
+	;;
+	"stop")
+		commande_scriptname_stop $1
+	;;
 	"enable")
 		commande_scriptname_enable $1
   	;;
