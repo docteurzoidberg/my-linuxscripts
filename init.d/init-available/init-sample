@@ -1,22 +1,19 @@
 #!/bin/bash
+DATE=$(date)
+LOG_PATH="/root/logs"
+LOG_FILE="init-sample.log"
 
 #fout la date a la suite du fichier /root/logs/init-sample.log
 
-DATE=$(date)
-LOGFILE="/root/logs/init-sample.log"
-
-
+LOG="${LOG_PATH}/${LOG_FILE}"
 case $1 in
 "start")
-	echo "Démarrage à ${DATE}" >> ${LOGFILE}
+	echo "Démarrage à ${DATE}" >> ${LOG_FILE}
 	;;
 "stop")
-	echo "Arrêt à ${DATE}" >> ${LOGFILE}
+	echo "Arrêt à ${DATE}" >> ${LOG_FILE}
 	;;
 *)
-	echo "Lancement sans argument à ${DATE}" >> ${LOGFILE}
+	echo "Lancement sans argument à ${DATE}" >> ${LOG_FILE}
 	;;
 esac
-
-
-
