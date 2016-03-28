@@ -1,6 +1,6 @@
 # CTSCRIPTS
 
-Scripts à lancer dans les CT et non sur le master
+Scripts à lancer dans les CTs et non sur le master***
 
 ## mongobackup
 	fait un dump d'une bdd mongo

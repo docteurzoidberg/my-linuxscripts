@@ -135,6 +135,76 @@ function fn_command_script_show {
   fn_commande "cat ${TEST_AVAILABLE}"
 }
 
+function fn_command_script_start {
+        ROOT_DIR=$1
+        AVAILABLE_DIR=$2
+        ENABLED_DIR=$3
+        SCRIPT_NAME=$4
+
+        TEST_AVAILABLE="${ROOT_DIR}/${AVAILABLE_DIR}/${SCRIPT_NAME}"
+        TEST_ENABLED="${ROOT_DIR}/${ENABLED_DIR}/${SCRIPT_NAME}"
+
+        #Test available
+        if [[ ! -f "${TEST_AVAILABLE}" ]]
+        then
+                rouge "Le script ${TEST_AVAILABLE} n'éxiste pas !"
+                exit -1
+        fi
+
+	 #Test enabled
+        if [[ ! -f "${TEST_ENABLED}" ]]
+        then
+                rouge "Le script n'est pas actif"
+                exit -1
+        fi
+
+        echo -e "Lancement de ${CYAN}${TEST_AVAILABLE}${NORMAL} start"
+
+        fn_commande "${TEST_AVAILABLE} start"
+        if [[ $? -eq 0 ]]
+        then
+                vert "Script ${SCRIPT_NAME} démarré :-)"
+        else
+                rouge "Erreur lors du lancement du script :-("
+        fi
+}
+
+
+function fn_command_script_stop {
+        ROOT_DIR=$1
+        AVAILABLE_DIR=$2
+        ENABLED_DIR=$3
+        SCRIPT_NAME=$4
+
+        TEST_AVAILABLE="${ROOT_DIR}/${AVAILABLE_DIR}/${SCRIPT_NAME}"
+        TEST_ENABLED="${ROOT_DIR}/${ENABLED_DIR}/${SCRIPT_NAME}"
+
+        #Test available
+        if [[ ! -f "${TEST_AVAILABLE}" ]]
+        then
+                rouge "Le script ${TEST_AVAILABLE} n'éxiste pas !"
+                exit -1
+        fi
+
+         #Test enabled
+        if [[ ! -f "${TEST_ENABLED}" ]]
+        then
+                rouge "Le script n'est pas actif"
+                exit -1
+        fi
+
+        echo -e "Lancement de ${CYAN}${TEST_AVAILABLE}${NORMAL} stop"
+
+        fn_commande "${TEST_AVAILABLE} stop"
+        if [[ $? -eq 0 ]]
+        then
+                vert "Script ${SCRIPT_NAME} démarré :-)"
+        else
+                rouge "Erreur lors du lancement du script :-("
+        fi
+}
+
+
 
 #Lien symbolique script $type-available/$script $type-enabled/script
 function fn_command_script_enable {

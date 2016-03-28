@@ -16,8 +16,8 @@ function _get_scripts_path {
 SCRIPTS_PATH=$(_get_scripts_path)
 cd $SCRIPTS_PATH
 
-. ./config
-. ./functions
+. $SCRIPTS_PATH/config
+. $SCRIPTS_PATH/functions
 
 encadre "init script v$VERSION"
 
@@ -29,10 +29,16 @@ function usage {
 
 	jaune "Utilisation: "
 
+	echo -e "init {scriptname} start \t ${CYAN}Lance le script {scriptname} start${NORMAL}"
+	echo -e "init {scriptname} stop \t\t ${CYAN}Lance le script {scriptname} stop${NORMAL}"
 	echo -e "init {scriptname} enable \t ${CYAN}Active le script {scriptname}${NORMAL}"
 	echo -e "init {scriptname} disable \t ${CYAN}Désactive le script {scriptname}${NORMAL}"
 	echo -e "init {scriptname} show \t\t ${CYAN}Affiche le script {scriptname}${NORMAL}"
 	echo -e "init {scriptname} edit \t\t ${CYAN}Edite le script {scriptname}${NORMAL}"
+	echo -e
+
+	echo -e "init install \t\t\t ${CYAN}Installe le script /etc/init.d/my-proxmox-scripts${NORMAL}"
+	echo -e "init uninstall \t\t\t ${CYAN}Désinstalle le script /etc/init.d/my-proxmox-scripts${NORMAL}"
 	echo -e "init start \t\t\t ${CYAN}Lance les scripts actifs avec la paramètre start${NORMAL}"
 	echo -e "init stop \t\t\t ${CYAN}Lance les scripts actifs avec le paramètre stop${NORMAL}"
 	echo -e "init scripts \t\t\t ${CYAN}Affiche les scripts actifs${NORMAL}"
@@ -76,9 +82,72 @@ function commande_stop {
   done;
 }
 
+function commande_install {
+
+	local NAME="my-proxmox-scripts"
+	local DEST="/etc/init.d/${NAME}"
+	if [[ -f $DEST ]]
+	then
+		rouge "Le fichier ${DEST} éxiste déjà !"
+		exit -1
+	fi
+
+	#Génère le script
+
+	jaune "Génération de ${DEST}"
+
+	echo "#!/bin/bash" > ${DEST}
+	echo >> ${DEST}
+	echo "SCRIPTS_PATH=${SCRIPTS_PATH}" >> ${DEST}
+	echo '${SCRIPTS_PATH}/init $1' >> ${DEST}
+
+	jaune "Chmod +x"
+	fn_commande "chmod +x ${DEST}"
+
+	jaune "Suppression dans rc.d"
+	fn_commande "update-rc.d ${NAME} remove"
+
+	jaune "Ajout dans rc.d"
+	fn_commande "update-rc.d ${NAME} defaults"
+
+	echo
+	vert "Script d'init installé !"
+}
+
+function commande_uninstall {
+	local NAME="my-proxmox-scripts"
+        local DEST="/etc/init.d/${NAME}"
+        if [[ ! -f $DEST ]]
+        then
+                rouge "Le fichier ${DEST} n'éxiste pas !"
+                exit -1
+        fi
+
+        #Génère le script
+
+        jaune "Suppression dans rc.d"
+        fn_commande "update-rc.d ${NAME} remove"
+
+        jaune "Suppression de ${DEST}"
+        fn_commande "rm ${DEST}"
+
+        echo
+        vert "Script d'init désinstallé !"
+}
+
+
+
 #--------------------------------------
 # commande_scriptname_*
 #--------------------------------------
+
+function commande_scriptname_start {
+	fn_command_script_start $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
+
+function commande_scriptname_stop {
+        fn_command_script_stop $SCRIPTS_PATH $FOLDER_AVAILABLE $FOLDER_ENABLED "${SCRIPT_PREFIX}$1"
+}
 
 function commande_scriptname_enable {
     if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
@@ -107,6 +176,12 @@ function commande_scriptname_show {
 function parse_commande_scriptname {
 
 	case $2 in
+	"start")
+		commande_scriptname_start $1
+	;;
+	"stop")
+		commande_scriptname_stop $1
+	;;
 	"enable")
 		commande_scriptname_enable $1
   	;;
@@ -139,6 +214,12 @@ function parse_commande {
 		;;
 	"stop")
 		commande_stop
+		;;
+	"install")
+		commande_install
+		;;
+	"uninstall")
+		commande_uninstall
 		;;
 	*)
 		parse_commande_scriptname $1 $2

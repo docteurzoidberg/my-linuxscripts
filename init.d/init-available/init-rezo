@@ -1,5 +1,20 @@
 #!/bin/bash
+DATE=$(date)
+SCRIPTS_PATH="/root/scripts"
+LOG_PATH="/root/logs"
+LOG_FILE="init-rezo.log"
 
-
-cd /root/scripts
-./rezo > /root/logs/init-rezo.log
+LOG="${LOG_PATH}/${LOG_FILE}"
+case $1 in
+"start"|"restart")
+	echo > ${LOG}
+	echo "Exécution du script rezo à ${DATE}" >> ${LOG}
+	echo >> ${LOG}
+  $SCRIPTS_PATH/rezo apply >> ${LOG}
+	;;
+*)
+	echo > ${LOG}
+	echo "Lancement avec argument non géré $1 à ${DATE}" >> ${LOG}
+	echo >> ${LOG}
+	;;
+esac
