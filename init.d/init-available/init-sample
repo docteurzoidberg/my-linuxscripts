@@ -8,12 +8,12 @@ LOG_FILE="init-sample.log"
 LOG="${LOG_PATH}/${LOG_FILE}"
 case $1 in
 "start")
-	echo "Démarrage à ${DATE}" >> ${LOG_FILE}
+	echo "Démarrage à ${DATE}" >> ${LOG}
 	;;
 "stop")
-	echo "Arrêt à ${DATE}" >> ${LOG_FILE}
+	echo "Arrêt à ${DATE}" >> ${LOG}
 	;;
 *)
-	echo "Lancement sans argument à ${DATE}" >> ${LOG_FILE}
+	echo "Lancement sans argument à ${DATE}" >> ${LOG}
 	;;
 esac

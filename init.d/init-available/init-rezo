@@ -6,11 +6,15 @@ LOG_FILE="init-rezo.log"
 
 LOG="${LOG_PATH}/${LOG_FILE}"
 case $1 in
-"start", "restart")
-	echo "Exécution du script rezo à ${DATE}" > ${LOG_FILE}
-  $SCRIPTS_PATH/rezo apply >> ${LOG_FILE}
+"start"|"restart")
+	echo > ${LOG}
+	echo "Exécution du script rezo à ${DATE}" >> ${LOG}
+	echo >> ${LOG}
+  $SCRIPTS_PATH/rezo apply >> ${LOG}
 	;;
 *)
-	echo "Lancement avec argument non géré $1 à ${DATE}" >> ${LOG_FILE}
+	echo > ${LOG}
+	echo "Lancement avec argument non géré $1 à ${DATE}" >> ${LOG}
+	echo >> ${LOG}
 	;;
 esac
