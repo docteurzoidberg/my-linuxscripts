@@ -45,6 +45,7 @@ function usage {
 #--------------------------------------
 
 function internal_enableforward {
+  #verif ip_forward bien push sur github
   echo 1 > /proc/sys/net/ipv4/ip_forward
 }
 
