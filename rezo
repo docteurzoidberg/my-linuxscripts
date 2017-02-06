@@ -29,6 +29,7 @@ function usage {
 
 	jaune "Utilisation: "
 
+	echo -e "./rezo {ID} create \t ${CYAN}Crée le script rezo {ID} depuis le template${NORMAL}"
 	echo -e "./rezo {ID} enable \t ${CYAN}Active le script rezo {ID}${NORMAL}"
 	echo -e "./rezo {ID} disable \t ${CYAN}Désactive le script rezo {ID}${NORMAL}"
 	echo -e "./rezo {ID} edit \t ${CYAN}Edite le script rezo {ID}${NORMAL}"
@@ -148,6 +149,14 @@ function commande_scripts {
 # commande_scriptname_*
 #--------------------------------------
 
+function commande_scriptname_create {
+    SCRIPT_DEST="$SCRIPTS_PATH/$FOLDER_AVAILABLE/${SCRIPT_PREFIX}$1"
+    SCRIPT_TEMPLATE="$SCRIPTS_PATH/$FOLDER_AVAILABLE/${SCRIPT_PREFIX}sample"
+    cmdcp="cp ${SCRIPT_TEMPLATE} ${SCRIPT_DEST}";
+    echo -e "Copie ${JAUNE}$SCRIPT_TEMPLATE${NORMAL} vers ${JAUNE}$SCRIPT_DEST${NORMAL}"
+    fn_commande "${cmdcp}"
+}
+
 function commande_scriptname_enable {
     if [[ ! -d $SCRIPTS_PATH/$FOLDER_ENABLED ]]
     then
@@ -175,6 +184,9 @@ function commande_scriptname_show {
 function parse_commande_scriptname {
 
 	case $2 in
+	"create")
+	commande_scriptname_create $1
+	;;
 	"enable")
     commande_scriptname_enable $1
   	;;
