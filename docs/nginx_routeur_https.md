@@ -19,6 +19,10 @@ Need nginx > 1.9
 
 	deb http://nginx.org/packages/mainline/debian/ jessie nginx
 	deb-src http://nginx.org/packages/mainline/debian/ jessie nginx
+	
+### Réinstallation nginx
+
+	apt-get update && apt-get install nginx
 
 ## 
 
@@ -42,7 +46,7 @@ Contenu:
 	                monsite3.fr site3_backend;
 	        }
 
-		#upsteam vpn
+		#upstream vpn
 	        upstream vpn_backend {
 			#adresse ip conteneur OPENVPN
 	                server 192.168.99.106:443;
@@ -112,7 +116,7 @@ Verif après reinstall dépuis les dépots, et ajout include ssl_preread:
 
 
 
-### Exemple fichier /etc/nginx/site-available/site1.fr
+### Exemple fichier /etc/nginx/sites-available/site1.fr
 
 (Exemple basé sur tppt.eu avec certif letsencrypt)	
 
