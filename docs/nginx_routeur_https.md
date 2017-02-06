@@ -27,7 +27,7 @@ Need nginx > 1.9
 
 ## Creation de /etc/nginx/ssl_preread
 
-C'est le fichier qui va faire l'éguillage HTTPS pour partager la meme IP, selon les vhosts
+C'est le fichier qui va faire l'aiguillage HTTPS pour partager la meme IP, selon les vhosts
 Par defaut, il fallback sur l'ip du VPN (car openvpn use pas de nom de domaine quand il se connecte)
 
 Contenu:
@@ -72,7 +72,7 @@ Contenu:
 	                proxy_pass $name;
 	                ssl_preread on;
 	        }
-}
+	}
 
 ## Config /etc/nginx/nginx.conf
 
