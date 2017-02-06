@@ -39,3 +39,11 @@ Installation wizard OpenVPN
 
 A faire avec les scripts de NAT :)
 
+
+## Fichier de configuration client
+
+Le wizard génère un fichier client /root/{NomUser}.ovpn qu'il faut récuperer (via ssh ou autre) pour utiliser avec le client windows.
+
+Ce fichier contient les certificats clients générés pendant le wizard d'install OpenVPN.
+
+
