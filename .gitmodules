@@ -1,0 +1,3 @@
+[submodule "my-linuxscripts-hostsetup"]
+	path = my-linuxscripts-hostsetup
+	url = git@github.com:docteurzoidberg/my-linuxscripts-hostsetup.git

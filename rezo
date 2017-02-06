@@ -44,6 +44,11 @@ function usage {
 # internal_*
 #--------------------------------------
 
+function internal_enableforward {
+  echo 1 > /proc/sys/net/ipv4/ip_forward
+}
+
+
 function internal_flushforward {
   echo
   jaune "Préparation des tables et regles par defaut..."
@@ -51,17 +56,6 @@ function internal_flushforward {
 
   #nettoi
   fn_commande "iptables -F FORWARD"
-
-    # trafic routé bloqué par défaut
-  #commande "iptables -P FORWARD DROP"
-
-  # trafic routé vers internet autorisé
-  #commande "iptables -A FORWARD ! -i vmbr0 -o vmbr0 -j ACCEPT"
-
-  # trafic retour d'internet routé autorisé
-  #commande "iptables -A FORWARD -i vmbr0 ! -o vmbr0 -m state --state ESTABLISHED,RELATED -j ACCEPT"
-
-  #NAT
 }
 
 function internal_flushnat {
@@ -94,16 +88,34 @@ function internal_runnatscript {
   fn_commande "./nat apply"
 }
 
+
+function internal_drops {
+  echo -e
+  jaune "Drops par défaut..."
+  echo -e
+
+  #iptables -A FORWARD -i vmbr1 -d 192.168.77.0/24 -j DROP
+}
+
 #--------------------------------------
 # commande_*
 #--------------------------------------
 
 
 function commande_apply {
+
+  internal_enableforward
+
   internal_flushforward
   internal_flushnat
+
+  iptables -t filter -A FORWARD -i vmbr0 -j ACCEPT
+  iptables -t filter -A FORWARD -o vmbr0 -j ACCEPT
+  iptables -t nat -A POSTROUTING -o vmbr0 -j MASQUERADE
+
   internal_runscripts
   internal_runnatscript
+  internal_drops
 }
 
 function commande_show {
