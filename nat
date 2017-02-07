@@ -28,7 +28,6 @@ encadre "nat script v$VERSION"
 function usage {
 
 	jaune "Utilisation: "
-
 	echo -e "./nat {ID} create \t ${CYAN}Crée le fichier vm{ID} à  partir du template${NORMAL}"
 	echo -e "./nat {ID} enable \t ${CYAN}Active le script nat {ID}${NORMAL}"
 	echo -e "./nat {ID} disable \t ${CYAN}Désactive le script nat {ID}${NORMAL}"
@@ -45,7 +44,9 @@ function usage {
 
 #Ajoute une regle dans iptables (table nat)
 function internal_add_nat {
-   	cmdnat="iptables -t nat -A PREROUTING -p $2 -d $3 --dport $4 -i vmbr0 -j DNAT --to-destination $5:$6"
+	dport=${4/"-"/":"}
+	#dport= `echo "${4}" | sed -r 's/-/:/g'`
+   	cmdnat="iptables -t nat -A PREROUTING -p $2 -d $3 --dport $dport -i vmbr0 -j DNAT --to-destination $5:$6"
 	echo -e "${CYAN}$1 ($2)${NORMAL}: ${cmdnat}"
 	${cmdnat}
 }
@@ -65,7 +66,7 @@ function internal_parse_nat {
 
 	#cat /tmp/nat.$$.out
 
-	while IFS=:- read label mode ipout portout ipin portin
+	while IFS=: read label mode ipout portout ipin portin
 	do
 		internal_add_nat $label $mode $ipout $portout $ipin $portin
 	done < /tmp/nat.$$.out
