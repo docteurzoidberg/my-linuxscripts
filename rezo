@@ -113,7 +113,7 @@ function commande_apply {
 
   iptables -t filter -A FORWARD -i vmbr0 -j ACCEPT
   iptables -t filter -A FORWARD -o vmbr0 -j ACCEPT
-  iptables -t nat -A POSTROUTING -o vmbr0 -j MASQUERADE
+  #iptables -t nat -A POSTROUTING -o vmbr0 -j MASQUERADE
 
   internal_runscripts
   internal_runnatscript
